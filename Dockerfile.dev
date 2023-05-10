@@ -3,4 +3,5 @@ WORKDIR /app
 COPY /quokka_editor_front/package.json .
 RUN npm install
 COPY /quokka_editor_front .
+EXPOSE 3000
 CMD ["npm", "run", "dev"]
