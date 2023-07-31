@@ -25,8 +25,7 @@ const Register: React.FC = () => {
         onSubmit={(values: Register) =>
           axios
             .post(API_URL + "auth/register", values)
-            .then((res) => console.log(res))
-            .catch((err) => console.log(err))
+            .then((res) => res.status === 200 && "Successfully registered")
         }
         validationSchema={validationSchema}
       >
