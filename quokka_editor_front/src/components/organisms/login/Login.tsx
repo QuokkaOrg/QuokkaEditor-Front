@@ -1,6 +1,7 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
-import { ERRORS } from "../../../consts";
+import { API_URL, ERRORS } from "../../../consts";
+import axios from "axios";
 
 interface Login {
   username: string;
@@ -13,7 +14,16 @@ const Login: React.FC = () => {
       <h1 className="text-3xl font-bold">Login</h1>
       <Formik
         initialValues={{ username: "", password: "" }}
-        onSubmit={(values: Login) => console.log(values)}
+        onSubmit={(values: Login) =>
+          axios.post(API_URL + "auth/login", values).then((res) => {
+            if (res.data.status_code) {
+              alert(res.data.detail);
+            } else {
+              sessionStorage.setItem("userToken", res.data.token);
+              alert("Succesfully logged in");
+            }
+          })
+        }
       >
         {() => (
           <Form className="flex flex-col justify-center w-52">
@@ -30,6 +40,7 @@ const Login: React.FC = () => {
               id="password"
               name="password"
               placeholder="Password"
+              type="password"
               className="border border-black rounded-md p-0.5"
             />
 

@@ -10,8 +10,8 @@ function App() {
 
   return (
     <div className="flex justify-evenly">
-      {/* <Login /> */}
-      <Register />
+      <Login />
+      {/* <Register /> */}
     </div>
   );
 }
