@@ -1,7 +1,7 @@
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import * as Yup from "yup";
-import { API_URL, ERRORS } from "../../../consts";
+import { Field, Form, Formik } from "formik";
+import { API_URL } from "../../../consts";
 import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 
 interface Login {
   username: string;
@@ -9,6 +9,8 @@ interface Login {
 }
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-col justify-center items-center">
       <h1 className="text-3xl font-bold">Login</h1>
@@ -19,8 +21,8 @@ const Login: React.FC = () => {
             if (res.data.status_code) {
               alert(res.data.detail);
             } else {
-              sessionStorage.setItem("userToken", res.data.token);
-              alert("Succesfully logged in");
+              sessionStorage.setItem("userToken", "Bearer " + res.data.token);
+              navigate("/documents");
             }
           })
         }
@@ -43,7 +45,9 @@ const Login: React.FC = () => {
               type="password"
               className="border border-black rounded-md p-0.5"
             />
-
+            <Link to={"register"} className="text-sm text-blue-600">
+              Don't have an account?
+            </Link>
             <button
               type="submit"
               className="bg-slate-600 text-white rounded-full w-1/2 self-center font-semibold m-2 p-1"
