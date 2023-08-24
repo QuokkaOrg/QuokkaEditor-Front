@@ -5,6 +5,7 @@ import { getDocuments } from "../../../Redux/documentsSlice";
 import axios from "axios";
 import { API_URL } from "../../../consts";
 import DeleteDocument from "../../molecules/deleteDocument/DeleteDocument";
+import AddDocument from "../../molecules/addDocument/AddDocument";
 
 const Documents: React.FC = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const Documents: React.FC = () => {
       <button type="button" onClick={logoutAction}>
         Logout
       </button>
+      <AddDocument />
       {documentsState.documents.map((document) => (
         <div key={document.id} className="border-2 m-2">
           {document.title}

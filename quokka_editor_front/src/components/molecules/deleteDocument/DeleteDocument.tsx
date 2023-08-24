@@ -11,6 +11,7 @@ interface DeleteDocumentProps {
 
 const DeleteDocument: React.FC<DeleteDocumentProps> = ({ id, title }) => {
   const dispatch = useAppDispatch();
+  const [deleteModal, setdeleteModal] = useState(false);
 
   const deleteDoc = (docId: string) => {
     axios
@@ -24,8 +25,6 @@ const DeleteDocument: React.FC<DeleteDocumentProps> = ({ id, title }) => {
         alert("Document deleted! Status:" + res.status);
       });
   };
-
-  const [deleteModal, setdeleteModal] = useState(false);
 
   return (
     <div>

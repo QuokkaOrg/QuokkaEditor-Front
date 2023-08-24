@@ -29,9 +29,13 @@ export const documentsSlice = createSlice({
         (document) => document.id !== action.payload
       );
     },
+    addDocument: (state, action: PayloadAction<DocumentState>) => {
+      state.documents = [...state.documents, action.payload];
+    },
   },
 });
 
-export const { getDocuments, deleteDocument } = documentsSlice.actions;
+export const { getDocuments, deleteDocument, addDocument } =
+  documentsSlice.actions;
 
 export default documentsSlice.reducer;
