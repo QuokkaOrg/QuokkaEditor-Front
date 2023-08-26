@@ -28,9 +28,9 @@ const AddDocument: React.FC = () => {
     <div>
       <button
         onClick={() => setAddModal(!addModal)}
-        className="bg-blue-600 text-white rounded-md p-1 m-1"
+        className="rounded-full py-2 px-4 mb-6 m-1 font-semibold text-lg bg-project-beige-800 drop-shadow-[0_2px_2px_rgba(0,0,0,0.1)]"
       >
-        Add document
+        + Add new
       </button>
       <dialog
         className=" absolute z-50 w-1/3 h-1/3 border-2 border-blue-700"
