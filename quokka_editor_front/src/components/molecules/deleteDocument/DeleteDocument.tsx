@@ -3,6 +3,7 @@ import { useState } from "react";
 import { API_URL } from "../../../consts";
 import { useAppDispatch } from "../../../Redux/hooks";
 import { deleteDocument } from "../../../Redux/documentsSlice";
+import Modal from "../../misc/Modal";
 
 interface DeleteDocumentProps {
   id: string;
@@ -11,7 +12,7 @@ interface DeleteDocumentProps {
 
 const DeleteDocument: React.FC<DeleteDocumentProps> = ({ id, title }) => {
   const dispatch = useAppDispatch();
-  const [deleteModal, setdeleteModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
 
   const deleteDoc = (docId: string) => {
     axios
@@ -31,32 +32,31 @@ const DeleteDocument: React.FC<DeleteDocumentProps> = ({ id, title }) => {
       <button
         type="button"
         className="text-red-600 font-bold"
-        onClick={() => setdeleteModal(!deleteModal)}
+        onClick={() => setDeleteModal(!deleteModal)}
       >
         DELETE
       </button>
-      <dialog
-        className=" absolute z-50 w-1/3 h-1/3 border-2 border-blue-700"
-        open={deleteModal}
-      >
-        <div className="flex flex-col justify-center items-center h-full">
-          <p>Do you want to delete document "{title}"?</p>
-          <div>
-            <button
-              className="px-4 m-2 py-1 rounded-md bg-blue-500 font-bold"
-              onClick={() => deleteDoc(id)}
-            >
-              YES
-            </button>
-            <button
-              className="px-4 m-2 py-1 rounded-md bg-gray-500 font-bold"
-              onClick={() => setdeleteModal(!deleteModal)}
-            >
-              NO
-            </button>
+      {deleteModal && (
+        <Modal setShowModal={setDeleteModal}>
+          <div className="flex flex-col justify-center items-center h-full">
+            <p>Do you want to delete document "{title}"?</p>
+            <div>
+              <button
+                className="px-4 m-2 py-1 rounded-md bg-red-500 font-bold"
+                onClick={() => deleteDoc(id)}
+              >
+                YES
+              </button>
+              <button
+                className="px-4 m-2 py-1 rounded-md bg-gray-500 font-bold"
+                onClick={() => setDeleteModal(!deleteModal)}
+              >
+                NO
+              </button>
+            </div>
           </div>
-        </div>
-      </dialog>
+        </Modal>
+      )}
     </div>
   );
 };
