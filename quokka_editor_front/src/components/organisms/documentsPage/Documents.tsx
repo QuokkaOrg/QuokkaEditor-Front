@@ -50,12 +50,6 @@ const Documents: React.FC = () => {
           <DocumentsGrid />
         </div>
       </div>
-      {/* {documentsState.documents.map((document) => (
-        <div key={document.id} className="border-2 m-2">
-          {document.title}
-          <DeleteDocument id={document.id} title={document.title} />
-        </div>
-      ))} */}
     </div>
   );
 };
