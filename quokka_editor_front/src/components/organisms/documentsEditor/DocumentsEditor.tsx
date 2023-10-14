@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { API_URL } from "../../../consts";
 import { useLocation } from "react-router-dom";
 
@@ -8,30 +8,12 @@ import "codemirror/lib/codemirror.css";
 import "codemirror/theme/ayu-mirage.css";
 import "codemirror/mode/stex/stex";
 
-type Operation = {
-  type: "INSERT" | "DELETE";
-  char?: string;
-  pos: number;
-  revision: number;
-};
-
-type Ack = {
-  message: "ACK";
-  revision_log: number;
-};
-
-type MessageOrAck = Operation & Ack;
+import { Operation } from "../../../types/ot";
 
 type ClientState = {
   lastSyncedRevision: number;
   pendingChanges: Operation[];
   sentChanges: Operation | null;
-  documentState: string;
-};
-
-type ServerState = {
-  pendingChanges: Operation[];
-  revisionLog: Operation[];
   documentState: string;
 };
 
@@ -41,31 +23,13 @@ const initialClient = {
   sentChanges: null,
   documentState: "",
 };
-const initialServer = {
-  pendingChanges: [],
-  revisionLog: [],
-  documentState: "",
-};
-
-const insertAt = (str: string, index: number, insertion: string) => {
-  if (index < 0 || index > str.length) {
-    return str;
-  }
-  return str.slice(0, index) + insertion + str.slice(index);
-};
-
-const removeAt = (str: string, index: number) => {
-  if (index < 0 || index >= str.length) {
-    return str;
-  }
-  return str.slice(0, index) + str.slice(index + 1);
-};
 
 const DocumentsEditor = () => {
   const location = useLocation();
-  const [document, setDocument] = useState({ id: "", title: "", content: "" });
   const [client, setClient] = useState<ClientState>(initialClient);
   const [socket, setSocket] = useState<WebSocket>();
+
+  const editorRef = useRef<CodeMirror.Editor | null>(null);
 
   const id = location.pathname.slice(
     location.pathname.lastIndexOf("/"),
@@ -79,33 +43,33 @@ const DocumentsEditor = () => {
       })
       .then((res) => {
         console.log(res.data);
-        setDocument(res.data);
-        setClient({ ...client, documentState: res.data.content });
+        console.log(JSON.parse(res.data.content).join("\n"));
+        setClient({
+          ...client,
+          documentState: JSON.parse(res.data.content).join("\n"),
+        });
       });
   }, []);
 
   useEffect(() => {
-    const s = new WebSocket("ws://localhost:8100/ws" + id);
+    const s = new WebSocket("ws://192.168.1.8:8100/ws" + id);
     s.onopen = (e) => console.log("Connected to WebSocket");
     s.onclose = (e) => console.log("Disconnected from WebSocket");
     s.onerror = (err) => console.error("Websocket Error: " + err);
     s.onmessage = (e) => {
-      console.log("Message", e.data);
-      const message = JSON.parse(e.data);
-      if (message.char) {
-        setClient((prevClient) => ({
-          ...client,
-          documentState: insertAt(
-            prevClient.documentState,
-            message.pos,
-            message.char
-          ),
-        }));
+      console.log("Ref: ", editorRef.current);
+      const message: Operation = JSON.parse(e.data);
+      if (message.text) {
+        editorRef.current?.replaceRange(
+          message.text,
+          message.from_pos,
+          message.to_pos
+        );
       }
       if (message.type === "DELETE") {
         setClient((prevClient) => ({
           ...client,
-          documentState: removeAt(prevClient.documentState, message.pos),
+          documentState: prevClient.documentState,
         }));
       }
     };
@@ -113,42 +77,29 @@ const DocumentsEditor = () => {
     return () => s.close();
   }, []);
 
-  const onChangeHandler = (
-    editor: CodeMirror.Editor,
-    data: CodeMirror.EditorChange,
-    value: string
-  ) => {
-    const pos = data.from.ch;
-    if (data.origin === "+input") {
-      socket?.send(
-        JSON.stringify({
-          type: "INSERT",
-          char: data.text[0],
-          pos: pos,
-          revision: 0,
-        })
-      );
-      setClient({
-        ...client,
-        documentState: insertAt(client.documentState, pos, data.text[0]),
-      });
-    } else if (data.origin === "+delete") {
-      socket?.send(
-        JSON.stringify({
-          type: "DELETE",
-          pos: pos,
-          revision: 0,
-        })
-      );
-      setClient({
-        ...client,
-        documentState: removeAt(client.documentState, pos),
-      });
+  const onChangeHandler = (data: CodeMirror.EditorChange, value: string) => {
+    const operation: Operation = {
+      from_pos: { line: data.from.line, ch: data.from.ch },
+      to_pos: { line: data.to.line, ch: data.to.ch },
+      text: data.text,
+      revision: 0,
+      type: data.origin?.toUpperCase(),
+    };
+    if (data.origin) {
+      console.log("Operation to send:", operation);
+      socket?.send(JSON.stringify(operation));
+      setClient({ ...client, documentState: value });
+    } else if (data.origin === undefined) {
+      setClient({ ...client, documentState: value });
     }
   };
 
   return (
     <CodeMirror
+      editorDidMount={(editor) => {
+        editorRef.current = editor;
+      }}
+      editorWillUnmount={() => (editorRef.current = null)}
       value={client.documentState}
       options={{
         mode: "stex",
@@ -157,7 +108,7 @@ const DocumentsEditor = () => {
       }}
       onBeforeChange={(editor, data, value) => {
         console.log("Data:", data);
-        onChangeHandler(editor, data, value);
+        onChangeHandler(data, value);
       }}
     />
   );
