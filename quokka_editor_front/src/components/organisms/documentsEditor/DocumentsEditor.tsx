@@ -5,7 +5,8 @@ import { useLocation } from "react-router-dom";
 
 import { Controlled as CodeMirror } from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
-import "codemirror/theme/material-palenight.css";
+import "codemirror/theme/ayu-mirage.css";
+import "codemirror/mode/stex/stex";
 
 type Operation = {
   type: "INSERT" | "DELETE";
@@ -119,7 +120,6 @@ const DocumentsEditor = () => {
   ) => {
     const pos = data.from.ch;
     if (data.origin === "+input") {
-      console.log("textttt", data.text[0]);
       socket?.send(
         JSON.stringify({
           type: "INSERT",
@@ -151,13 +151,12 @@ const DocumentsEditor = () => {
     <CodeMirror
       value={client.documentState}
       options={{
-        mode: "LaTeX",
-        theme: "material-palenight",
+        mode: "stex",
+        theme: "ayu-mirage",
         lineNumbers: true,
       }}
       onBeforeChange={(editor, data, value) => {
         console.log("Data:", data);
-
         onChangeHandler(editor, data, value);
       }}
     />
