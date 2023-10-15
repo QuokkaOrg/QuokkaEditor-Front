@@ -11,4 +11,9 @@ export type Operation = {
   revision: number;
 };
 
-
+export type ClientState = {
+  lastSyncedRevision: number;
+  pendingChanges: Operation[];
+  sentChanges: Operation | null;
+  documentState: string;
+};
