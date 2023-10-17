@@ -5,7 +5,7 @@ export const createWebSocket = (
   editor: CodeMirror.Editor | null,
   setClient: React.Dispatch<React.SetStateAction<ClientState>>
 ) => {
-  const s = new WebSocket("ws://192.168.1.8:8100/ws" + id);
+  const s = new WebSocket("wss://damian-quokka-backend.eu.ngrok.io/ws" + id);
   s.onopen = (e) => console.log("Connected to WebSocket");
   s.onclose = (e) => console.log("Disconnected from WebSocket");
   s.onerror = (err) => console.error("Websocket Error: " + err);
