@@ -3,7 +3,7 @@ export type Pos = {
   ch: number;
 };
 
-export type Operation = {
+export type OperationType = {
   type: string | undefined;
   text: string[];
   from_pos: Pos;
@@ -13,7 +13,7 @@ export type Operation = {
 
 export type ClientState = {
   lastSyncedRevision: number;
-  pendingChanges: Operation[];
-  sentChanges: Operation | null;
+  pendingChanges: OperationType[];
+  sentChanges: OperationType | null;
   documentState: string;
 };

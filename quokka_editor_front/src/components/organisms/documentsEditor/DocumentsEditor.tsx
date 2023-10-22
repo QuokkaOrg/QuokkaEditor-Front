@@ -8,7 +8,7 @@ import "codemirror/lib/codemirror.css";
 import "codemirror/theme/ayu-mirage.css";
 import "codemirror/mode/stex/stex";
 
-import { ClientState, Operation, Pos } from "../../../types/ot";
+import { ClientState, OperationType, Pos } from "../../../types/ot";
 import { createWebSocket } from "./webSocket";
 
 import { parse, HtmlGenerator } from "latex.js";
@@ -40,6 +40,7 @@ const DocumentsEditor = () => {
 
   const generator = useRef(new HtmlGenerator({ hyphenate: false }));
 
+  //get document
   useEffect(() => {
     axios
       .get(API_URL + "documents" + id, {
@@ -48,11 +49,13 @@ const DocumentsEditor = () => {
       .then((res) => {
         setClient({
           ...client,
-          documentState: JSON.parse(res.data.content).join("\n"),
+          documentState: JSON.parse(res.data.document.content).join("\n"),
+          lastSyncedRevision: JSON.parse(res.data.revision),
         });
       });
   }, []);
 
+  //open websocket connection
   useEffect(() => {
     const s = createWebSocket(id, editorRef.current, setClient);
     socket.current = s;
@@ -74,18 +77,45 @@ const DocumentsEditor = () => {
     window.addEventListener("resize", handler);
   }, [editorRef.current]);
 
+  //setState when got ACK and we have pending changes
+  useEffect(() => {
+    //console.log(client);
+    if (client.sentChanges === null && client.pendingChanges.length !== 0) {
+      socket.current?.send(JSON.stringify(client.pendingChanges[0]));
+      setClient({
+        ...client,
+        sentChanges: client.pendingChanges[0],
+        pendingChanges: client.pendingChanges.slice(1),
+      });
+    }
+  }, [client.sentChanges]);
+
   const onChangeHandler = (data: CodeMirror.EditorChange, value: string) => {
     if (!socket.current) return;
-    const operation: Operation = {
+    const operation: OperationType = {
       from_pos: { line: data.from.line, ch: data.from.ch },
       to_pos: { line: data.to.line, ch: data.to.ch },
       text: data.text,
-      revision: 0,
+      revision: client.lastSyncedRevision,
       type: data.origin?.toUpperCase(),
     };
+    console.log(operation);
     if (data.origin) {
-      socket.current.send(JSON.stringify(operation));
-      setClient({ ...client, documentState: value });
+      if (client.sentChanges === null) {
+        socket.current.send(JSON.stringify(operation));
+        setClient((prevClient) => ({
+          ...prevClient,
+          sentChanges: operation,
+          documentState: value,
+        }));
+      } else {
+        setClient((prevClient) => ({
+          ...prevClient,
+          pendingChanges: [...prevClient.pendingChanges, operation],
+          documentState: value,
+        }));
+      }
+      //setClient({ ...client, documentState: value });
     } else if (data.origin === undefined) {
       setClient({ ...client, documentState: value });
     }
@@ -98,7 +128,7 @@ const DocumentsEditor = () => {
     socket.current.send(JSON.stringify({ type: "cursor", data: cursorPos }));
   };
 
-  const napierdalanieHandler = () => {
+  const getPDFHandler = () => {
     axios
       .get(API_URL + "documents/get-pdf" + id, {
         headers: {
@@ -143,7 +173,7 @@ const DocumentsEditor = () => {
             try {
               const parsed = parse(value, {
                 generator: generator.current,
-              }).htmlDocument();
+              }).htmlDocument("https://cdn.jsdelivr.net/npm/latex.js/dist/");
               return setState({
                 data: parsed.documentElement.outerHTML,
                 error: null,
@@ -157,14 +187,15 @@ const DocumentsEditor = () => {
           }, 1000);
         }}
         onCursorActivity={(editor) => {
-          onCursorHandler(editor);
+          if (socket.current?.readyState === socket.current?.OPEN)
+            onCursorHandler(editor);
         }}
       />
       <div className="bg-orange-200 p-16">
         <button
           className="rounded-full px-6 py-3 flex items-center justify-center bg-purple-500 text-white text-2xl absolute right-8 bottom-8 shadow-xl"
           type="button"
-          onClick={() => napierdalanieHandler()}
+          onClick={() => console.log(client)}
         >
           Download PDF
         </button>
