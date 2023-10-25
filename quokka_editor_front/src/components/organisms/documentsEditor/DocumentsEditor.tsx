@@ -37,9 +37,9 @@ const DocumentsEditor = () => {
     location.pathname.lastIndexOf("/"),
     location.pathname.length
   );
+  const token = location.search;
 
   const generator = useRef(new HtmlGenerator({ hyphenate: false }));
-
   //get document
   useEffect(() => {
     axios
@@ -47,17 +47,18 @@ const DocumentsEditor = () => {
         headers: { Authorization: sessionStorage.getItem("userToken") },
       })
       .then((res) => {
+        console.log(res);
         setClient({
           ...client,
-          documentState: JSON.parse(res.data.document.content).join("\n"),
-          lastSyncedRevision: JSON.parse(res.data.revision),
+          documentState: JSON.parse(res.data.content).join("\n"),
+          lastSyncedRevision: JSON.parse(res.data.last_revision),
         });
       });
   }, []);
 
   //open websocket connection
   useEffect(() => {
-    const s = createWebSocket(id, editorRef.current, setClient);
+    const s = createWebSocket(id, editorRef.current, setClient, token);
     socket.current = s;
     return () => s.close();
   }, []);
@@ -81,10 +82,14 @@ const DocumentsEditor = () => {
   useEffect(() => {
     //console.log(client);
     if (client.sentChanges === null && client.pendingChanges.length !== 0) {
-      socket.current?.send(JSON.stringify(client.pendingChanges[0]));
+      const operationToSend: OperationType = {
+        ...client.pendingChanges[0],
+        revision: client.lastSyncedRevision,
+      };
+      socket.current?.send(JSON.stringify(operationToSend));
       setClient({
         ...client,
-        sentChanges: client.pendingChanges[0],
+        sentChanges: operationToSend,
         pendingChanges: client.pendingChanges.slice(1),
       });
     }
@@ -99,8 +104,8 @@ const DocumentsEditor = () => {
       revision: client.lastSyncedRevision,
       type: data.origin?.toUpperCase(),
     };
-    console.log(operation);
     if (data.origin) {
+      console.log("SENDING OPERATION: ", operation);
       if (client.sentChanges === null) {
         socket.current.send(JSON.stringify(operation));
         setClient((prevClient) => ({

@@ -1,13 +1,17 @@
-import { WEBSOCKET_URL } from "../../../consts";
+import { OperationInputs, WEBSOCKET_URL } from "../../../consts";
 import { ClientState, OperationType } from "../../../types/ot";
+import transform from "./ot";
 
 export const createWebSocket = (
   id: string,
   editor: CodeMirror.Editor | null,
-  setClient: React.Dispatch<React.SetStateAction<ClientState>>
+  setClient: React.Dispatch<React.SetStateAction<ClientState>>,
+  token: string
 ) => {
-  const s = new WebSocket(WEBSOCKET_URL + id);
-  s.onopen = (e) => console.log("Connected to WebSocket");
+  const s = new WebSocket(WEBSOCKET_URL + id + token);
+  s.onopen = (e) => {
+    console.log("Connected to WebSocket");
+  };
   s.onclose = (e) => console.log("Disconnected from WebSocket");
   s.onerror = (err) => console.error("Websocket Error: " + err);
   s.onmessage = (e) => {
@@ -23,12 +27,25 @@ export const createWebSocket = (
     if (data.type !== "cursor") {
       const message: OperationType = JSON.parse(e.data);
       if (message.text) {
-        editor?.replaceRange(message.text, message.from_pos, message.to_pos);
-      }
-      if (message.type === "DELETE") {
+        console.log("REVISION :: ", data.revision);
         setClient((prevClient) => ({
           ...prevClient,
-          documentState: prevClient.documentState,
+          pendingChanges: prevClient.pendingChanges.map((change) =>
+            transform(message, change)
+          ),
+          lastSyncedRevision: data.revision,
+        }));
+        editor?.replaceRange(message.text, message.from_pos, message.to_pos);
+      }
+      if (message.type === OperationInputs.DELETE) {
+        console.log("REVISION DELETE :: ", data.revision);
+
+        setClient((prevClient) => ({
+          ...prevClient,
+          pendingChanges: prevClient.pendingChanges.map((change) =>
+            transform(message, change)
+          ),
+          lastSyncedRevision: data.revision,
         }));
       }
     }
