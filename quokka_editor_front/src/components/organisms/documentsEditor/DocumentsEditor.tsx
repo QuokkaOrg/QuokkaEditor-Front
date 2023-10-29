@@ -5,13 +5,22 @@ import { useLocation } from "react-router-dom";
 
 import { Controlled as CodeMirror } from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
-import "codemirror/theme/ayu-mirage.css";
+import "codemirror/theme/dracula.css";
 import "codemirror/mode/stex/stex";
 
-import { ClientState, OperationType, Pos } from "../../../types/ot";
+import { ClientState, CursorType, OperationType, Pos } from "../../../types/ot";
 import { createWebSocket } from "./webSocket";
 
-import { parse, HtmlGenerator } from "latex.js";
+import { HtmlGenerator } from "latex.js";
+import RemoteCursor from "../../atoms/remoteCursor/RemoteCursor";
+import { ScrollInfo } from "codemirror";
+import {
+  getPDFHandler,
+  onBeforeChangeHandler,
+  onChangeHandler,
+  onCursorHandler,
+} from "./handlers";
+import { sendChanges } from "./ot";
 
 const initialClient = {
   lastSyncedRevision: 0,
@@ -19,35 +28,42 @@ const initialClient = {
   sentChanges: null,
   documentState: "",
 };
+const initialScroll = {
+  left: 0,
+  top: 0,
+  width: 0,
+  height: 0,
+  clientWidth: 0,
+  clientHeight: 0,
+};
 
 const DocumentsEditor = () => {
-  const location = useLocation();
   const [client, setClient] = useState<ClientState>(initialClient);
-  const interval = useRef<number | null>(null);
   const [{ data, error }, setState] = useState<{
     data: string | null;
     error: string | null;
   }>({ data: null, error: null });
-  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const [remoteCursors, setRemoteCursors] = useState<CursorType[] | null>([]);
+  const [scrollInfo, setScrollInfo] = useState<ScrollInfo>(initialScroll);
 
-  const editorRef = useRef<CodeMirror.Editor | null>(null);
   const socket = useRef<WebSocket | null>(null);
+  const interval = useRef<number | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const editorRef = useRef<CodeMirror.Editor | null>(null);
+  const generator = useRef(new HtmlGenerator({ hyphenate: false }));
 
+  const location = useLocation();
   const id = location.pathname.slice(
     location.pathname.lastIndexOf("/"),
     location.pathname.length
   );
-  const token = location.search;
 
-  const generator = useRef(new HtmlGenerator({ hyphenate: false }));
-  //get document
   useEffect(() => {
     axios
       .get(API_URL + "documents" + id, {
         headers: { Authorization: sessionStorage.getItem("userToken") },
       })
       .then((res) => {
-        console.log(res);
         setClient({
           ...client,
           documentState: JSON.parse(res.data.content).join("\n"),
@@ -56,9 +72,13 @@ const DocumentsEditor = () => {
       });
   }, []);
 
-  //open websocket connection
   useEffect(() => {
-    const s = createWebSocket(id, editorRef.current, setClient, token);
+    const s = createWebSocket(
+      id,
+      editorRef.current,
+      setClient,
+      setRemoteCursors
+    );
     socket.current = s;
     return () => s.close();
   }, []);
@@ -78,80 +98,9 @@ const DocumentsEditor = () => {
     window.addEventListener("resize", handler);
   }, [editorRef.current]);
 
-  //setState when got ACK and we have pending changes
   useEffect(() => {
-    //console.log(client);
-    if (client.sentChanges === null && client.pendingChanges.length !== 0) {
-      const operationToSend: OperationType = {
-        ...client.pendingChanges[0],
-        revision: client.lastSyncedRevision,
-      };
-      socket.current?.send(JSON.stringify(operationToSend));
-      setClient({
-        ...client,
-        sentChanges: operationToSend,
-        pendingChanges: client.pendingChanges.slice(1),
-      });
-    }
+    sendChanges(socket, client, setClient);
   }, [client.sentChanges]);
-
-  const onChangeHandler = (data: CodeMirror.EditorChange, value: string) => {
-    if (!socket.current) return;
-    const operation: OperationType = {
-      from_pos: { line: data.from.line, ch: data.from.ch },
-      to_pos: { line: data.to.line, ch: data.to.ch },
-      text: data.text,
-      revision: client.lastSyncedRevision,
-      type: data.origin?.toUpperCase(),
-    };
-    if (data.origin) {
-      console.log("SENDING OPERATION: ", operation);
-      if (client.sentChanges === null) {
-        socket.current.send(JSON.stringify(operation));
-        setClient((prevClient) => ({
-          ...prevClient,
-          sentChanges: operation,
-          documentState: value,
-        }));
-      } else {
-        setClient((prevClient) => ({
-          ...prevClient,
-          pendingChanges: [...prevClient.pendingChanges, operation],
-          documentState: value,
-        }));
-      }
-      //setClient({ ...client, documentState: value });
-    } else if (data.origin === undefined) {
-      setClient({ ...client, documentState: value });
-    }
-  };
-
-  const onCursorHandler = (editor: CodeMirror.Editor) => {
-    if (!socket.current) return;
-    const cursor = editor.getCursor();
-    const cursorPos: Pos = { ch: cursor.ch, line: cursor.line };
-    socket.current.send(JSON.stringify({ type: "cursor", data: cursorPos }));
-  };
-
-  const getPDFHandler = () => {
-    axios
-      .get(API_URL + "documents/get-pdf" + id, {
-        headers: {
-          Authorization: sessionStorage.getItem("userToken"),
-          Accept: "application/pdf",
-        },
-        responseType: "blob",
-      })
-      .then((res) => {
-        const url = window.URL.createObjectURL(new Blob([res.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "file.pdf");
-        document.body.appendChild(link);
-        link.click();
-        link.remove;
-      });
-  };
 
   return (
     <div className="grid grid-cols-2 h-screen">
@@ -163,44 +112,39 @@ const DocumentsEditor = () => {
         value={client.documentState}
         options={{
           mode: "stex",
-          theme: "ayu-mirage",
+          theme: "dracula",
           lineNumbers: true,
+          lineWrapping: true,
         }}
         onBeforeChange={(_editor, data, value) => {
-          onChangeHandler(data, value);
+          onBeforeChangeHandler(data, value, socket, client, setClient);
         }}
         onChange={(_editor, _data, value) => {
-          if (!generator.current)
-            return setState({ data: null, error: "Generator is undefined" });
-          if (interval.current) clearInterval(interval.current);
-          interval.current = setTimeout(() => {
-            generator.current.reset();
-            try {
-              const parsed = parse(value, {
-                generator: generator.current,
-              }).htmlDocument("https://cdn.jsdelivr.net/npm/latex.js/dist/");
-              return setState({
-                data: parsed.documentElement.outerHTML,
-                error: null,
-              });
-            } catch (e) {
-              console.log(e);
-              if (e instanceof Error)
-                return setState({ data: null, error: e.message });
-              return setState({ data: null, error: "Unknown error" });
-            }
-          }, 1000);
+          onChangeHandler(generator, interval, setState, value);
         }}
         onCursorActivity={(editor) => {
           if (socket.current?.readyState === socket.current?.OPEN)
-            onCursorHandler(editor);
+            onCursorHandler(editor, socket);
+        }}
+        onScroll={() => {
+          if (!editorRef.current) return;
+          setScrollInfo(editorRef.current.getScrollInfo());
         }}
       />
+      {remoteCursors?.map((cursor) => (
+        <RemoteCursor
+          key={cursor.token}
+          cursorData={cursor}
+          editor={editorRef.current}
+          scrollInfo={scrollInfo}
+        />
+      ))}
+
       <div className="bg-orange-200 p-16">
         <button
           className="rounded-full px-6 py-3 flex items-center justify-center bg-purple-500 text-white text-2xl absolute right-8 bottom-8 shadow-xl"
           type="button"
-          onClick={() => console.log(client)}
+          onClick={() => getPDFHandler(id)}
         >
           Download PDF
         </button>

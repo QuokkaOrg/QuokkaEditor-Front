@@ -17,3 +17,9 @@ export type ClientState = {
   sentChanges: OperationType | null;
   documentState: string;
 };
+
+export type CursorType = {
+  token: string;
+  ch: number;
+  line: number;
+}

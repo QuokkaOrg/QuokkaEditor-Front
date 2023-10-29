@@ -1,5 +1,24 @@
 import { OperationInputs } from "../../../consts";
-import { Pos, OperationType } from "../../../types/ot";
+import { Pos, OperationType, ClientState } from "../../../types/ot";
+
+export const sendChanges = (
+  socket: React.MutableRefObject<WebSocket | null>,
+  client: ClientState,
+  setClient: React.Dispatch<React.SetStateAction<ClientState>>
+) => {
+  if (client.sentChanges === null && client.pendingChanges.length !== 0) {
+    const operationToSend: OperationType = {
+      ...client.pendingChanges[0],
+      revision: client.lastSyncedRevision,
+    };
+    socket.current?.send(JSON.stringify(operationToSend));
+    setClient({
+      ...client,
+      sentChanges: operationToSend,
+      pendingChanges: client.pendingChanges.slice(1),
+    });
+  }
+};
 
 const adjustPosition = (newPos: Pos, prevPos: Pos, prevText: string) => {
   if (
@@ -21,8 +40,7 @@ const adjustPosition = (newPos: Pos, prevPos: Pos, prevText: string) => {
   };
 };
 
-const transform = (newOp: OperationType, prevOp: OperationType) => {
-  console.log("NEW OP:", newOp, "PREV OP:", prevOp);
+export const transform = (newOp: OperationType, prevOp: OperationType) => {
   const inputAddTypes = [
     OperationInputs.INPUT,
     OperationInputs.PASTE,
@@ -33,7 +51,6 @@ const transform = (newOp: OperationType, prevOp: OperationType) => {
     inputAddTypes.includes(newOp.type) &&
     inputAddTypes.includes(prevOp.type)
   ) {
-    console.log("simea");
     const adjustedFrom_pos = adjustPosition(
       newOp.from_pos,
       prevOp.from_pos,
@@ -44,13 +61,7 @@ const transform = (newOp: OperationType, prevOp: OperationType) => {
       newOp.from_pos,
       prevOp.text[0]
     );
-    console.log("TRANSFORMED OP: ", {
-      from_pos: adjustedFrom_pos,
-      to_pos: adjustedTo_pos,
-      text: newOp.text,
-      type: OperationInputs.INPUT,
-      revision: newOp.revision,
-    });
+
     return {
       from_pos: adjustedFrom_pos,
       to_pos: adjustedTo_pos,
@@ -116,5 +127,3 @@ const transform = (newOp: OperationType, prevOp: OperationType) => {
 
   throw new Error("Invalid OperationInputs");
 };
-
-export default transform;
