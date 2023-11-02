@@ -1,10 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
+import { useAppDispatch } from "../../../Redux/hooks";
 import { useEffect } from "react";
 import { getDocuments } from "../../../Redux/documentsSlice";
 import axios from "axios";
 import { API_URL } from "../../../consts";
-import DeleteDocument from "../../molecules/deleteDocument/DeleteDocument";
 import AddDocument from "../../molecules/addDocument/AddDocument";
 import SearchBar from "../../atoms/searchBar/SearchBar";
 import DocumentOptions from "../../molecules/documentsOptions/DocumentsOptions";
@@ -13,7 +12,6 @@ import DocumentsGrid from "../../molecules/documentsGrid/DocumentsGrid";
 const Documents: React.FC = () => {
   const navigate = useNavigate();
 
-  const documentsState = useAppSelector((state) => state.documents);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -21,7 +19,7 @@ const Documents: React.FC = () => {
       .get(API_URL + "documents/", {
         headers: { Authorization: sessionStorage.getItem("userToken") },
       })
-      .then((res) => dispatch(getDocuments(res.data)));
+      .then((res) => dispatch(getDocuments(res.data.items)));
   }, []);
 
   const logoutAction = () => {
@@ -44,7 +42,7 @@ const Documents: React.FC = () => {
         </div>
         <div
           id="documents"
-          className="flex justify-center mr-14 h-5/6 bg-project-beige-800 overflow-hidden hover:overflow-y-scroll"
+          className="flex justify-center mr-14 h-[91.111%] bg-project-beige-800 overflow-hidden hover:overflow-y-scroll"
           style={{ scrollbarGutter: "stable" }}
         >
           <DocumentsGrid />

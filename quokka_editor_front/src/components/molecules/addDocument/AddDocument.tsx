@@ -18,7 +18,9 @@ const AddDocument: React.FC = () => {
       .get(API_URL + "templates/", {
         headers: { Authorization: sessionStorage.getItem("userToken") },
       })
-      .then((res) => setTemplates(res.data));
+      .then((res) => {
+        setTemplates(res.data.items);
+      });
   }, []);
 
   const addDoc = () => {
