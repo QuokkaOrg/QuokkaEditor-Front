@@ -44,7 +44,7 @@ const Documents: React.FC = () => {
         </div>
         <div
           id="documents"
-          className="flex justify-center mr-14 h-5/6 bg-project-beige-800 overflow-hidden hover:overflow-y-scroll bg-[#353745]"
+          className="flex justify-center mr-14 h-5/6 overflow-hidden hover:overflow-y-scroll bg-[#353745]"
           style={{ scrollbarGutter: "stable" }}
         >
           <DocumentsGrid />

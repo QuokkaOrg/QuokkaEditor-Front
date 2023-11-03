@@ -14,7 +14,7 @@ const DocumentBox: React.FC<DocumentBoxProps> = ({ title, content, id }) => {
   };
 
   return (
-    <div className="h-48 w-56 rounded-md text-white" onClick={onClickHandler}>
+    <div className="h-48 w-56 rounded-md text-white bg-[#20222B]" onClick={onClickHandler}>
       {title} <DeleteDocument title={title} id={id} />
     </div>
   );
