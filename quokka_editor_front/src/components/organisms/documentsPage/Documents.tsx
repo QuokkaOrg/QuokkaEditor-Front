@@ -30,7 +30,7 @@ const Documents: React.FC = () => {
   };
 
   return (
-    <div className="flex">
+    <div className="flex bg-[#2A2C38]">
       <div id="options-panel" className="w-64 flex flex-col items-center mt-20">
         <AddDocument />
         <DocumentOptions />
@@ -44,7 +44,7 @@ const Documents: React.FC = () => {
         </div>
         <div
           id="documents"
-          className="flex justify-center mr-14 h-5/6 bg-project-beige-800 overflow-hidden hover:overflow-y-scroll"
+          className="flex justify-center mr-14 h-5/6 bg-project-beige-800 overflow-hidden hover:overflow-y-scroll bg-[#353745]"
           style={{ scrollbarGutter: "stable" }}
         >
           <DocumentsGrid />

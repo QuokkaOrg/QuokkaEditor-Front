@@ -6,15 +6,15 @@ const DocumentsGrid: React.FC = () => {
 
   return (
     <div className="my-4">
-      <h3 className="font-semibold">Your Files</h3>
-      <h3 className="font-semibold">Recent</h3>
+      <h3 className="font-semibold text-white">Your Files</h3>
+      <h3 className="font-semibold text-white">Recent</h3>
       <div className="grid grid-cols-6 gap-4">
         {documents.map(({ title, content, id }) => (
           <DocumentBox key={id} {...{ title, content, id }} />
         ))}
       </div>
-      <h3 className="font-semibold">Projects</h3>
-      <h3 className="font-semibold">Files</h3>
+      <h3 className="font-semibold text-white">Projects</h3>
+      <h3 className="font-semibold text-white">Files</h3>
       <div className="grid grid-cols-6 gap-4 "></div>
     </div>
   );

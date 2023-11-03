@@ -29,7 +29,7 @@ const AddDocument: React.FC = () => {
     <>
       <button
         onClick={() => setAddModal(!addModal)}
-        className="rounded-full py-2 px-4 mb-6 m-1 font-semibold text-lg bg-project-beige-800 drop-shadow-[0_2px_2px_rgba(0,0,0,0.1)]"
+        className="rounded-full py-2 px-4 mb-6 m-1 font-semibold text-lg bg-project-beige-800 drop-shadow-[0_2px_2px_rgba(0,0,0,0.1)] bg-[#20222B] text-white"
       >
         + Add new
       </button>
