@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import DeleteDocument from "../../molecules/deleteDocument/DeleteDocument";
+import { useAppDispatch } from "../../../Redux/hooks";
+import { setSelectedDocument } from "../../../Redux/documentsSlice";
 
 interface DocumentBoxProps {
   title: string;
@@ -7,15 +9,27 @@ interface DocumentBoxProps {
   id: string;
 }
 
-const DocumentBox: React.FC<DocumentBoxProps> = ({ title, content, id }) => {
+const DocumentBox: React.FC<DocumentBoxProps> = ({ title, id, selected }) => {
   const navigate = useNavigate();
-  const onClickHandler = () => {
+  const dispatch = useAppDispatch();
+
+  const onDoubleClickHandler = () => {
     navigate("/documents/" + id);
   };
 
+  const onClickHandler = () => {
+    dispatch(setSelectedDocument(id));
+  };
+
   return (
-    <div className="h-48 w-56 rounded-md text-white bg-[#20222B]" onClick={onClickHandler}>
-      {title} <DeleteDocument title={title} id={id} />
+    <div
+      className={`${
+        selected ? "border-2 border-cyan-500 shadow-md" : null
+      } h-48 w-56 rounded-md text-white bg-[#20222B]`}
+      onDoubleClick={onDoubleClickHandler}
+      onClick={onClickHandler}
+    >
+      {title}
     </div>
   );
 };

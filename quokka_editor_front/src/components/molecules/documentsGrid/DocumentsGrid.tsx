@@ -9,8 +9,8 @@ const DocumentsGrid: React.FC = () => {
       <h3 className="font-semibold text-white">Your Files</h3>
       <h3 className="font-semibold text-white">Recent</h3>
       <div className="grid grid-cols-6 gap-4">
-        {documents.map(({ title, content, id }) => (
-          <DocumentBox key={id} {...{ title, content, id }} />
+        {documents.map(({ title, id, selected }) => (
+          <DocumentBox key={id} {...{ title, id, selected }} />
         ))}
       </div>
       <h3 className="font-semibold text-white">Projects</h3>
