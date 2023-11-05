@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import DeleteDocument from "../../molecules/deleteDocument/DeleteDocument";
 
 interface DocumentBoxProps {
@@ -7,8 +8,13 @@ interface DocumentBoxProps {
 }
 
 const DocumentBox: React.FC<DocumentBoxProps> = ({ title, content, id }) => {
+  const navigate = useNavigate();
+  const onClickHandler = () => {
+    navigate("/documents/" + id);
+  };
+
   return (
-    <div className="h-48 w-56 rounded-md bg-[#ffe7c9]">
+    <div className="h-48 w-56 rounded-md bg-[#ffe7c9]" onClick={onClickHandler}>
       {title} <DeleteDocument title={title} id={id} />
     </div>
   );

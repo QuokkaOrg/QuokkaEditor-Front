@@ -23,7 +23,7 @@ const Login: React.FC = () => {
               alert(res.data.detail);
             } else {
               sessionStorage.setItem("userToken", "Bearer " + res.data.token);
-              navigate("/documents");
+              navigate("/documents/");
             }
           })
         }

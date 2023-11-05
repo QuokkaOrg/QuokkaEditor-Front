@@ -18,7 +18,7 @@ const Documents: React.FC = () => {
 
   useEffect(() => {
     axios
-      .get(API_URL + "documents", {
+      .get(API_URL + "documents/", {
         headers: { Authorization: sessionStorage.getItem("userToken") },
       })
       .then((res) => dispatch(getDocuments(res.data)));
