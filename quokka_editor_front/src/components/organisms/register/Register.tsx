@@ -1,7 +1,8 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
-import { API_URL, ERRORS } from "../../../consts";
+import { API_URL } from "../../../consts";
 import axios from "axios";
+import { ERRORS } from "../../../errors";
 
 interface Register {
   username: string;
