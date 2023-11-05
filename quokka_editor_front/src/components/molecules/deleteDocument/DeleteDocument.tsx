@@ -4,7 +4,6 @@ import { API_URL } from "../../../consts";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { deleteDocument } from "../../../Redux/documentsSlice";
 import Modal from "../../misc/Modal";
-import DocumentButton from "../../atoms/documentButton/DocumentButton";
 
 interface DeleteDocumentType {
   id: string;

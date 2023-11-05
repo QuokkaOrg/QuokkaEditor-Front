@@ -5,8 +5,9 @@ import { setSelectedDocument } from "../../../Redux/documentsSlice";
 
 interface DocumentBoxProps {
   title: string;
-  content?: string;
   id: string;
+  selected: boolean;
+  content?: string;
 }
 
 const DocumentBox: React.FC<DocumentBoxProps> = ({ title, id, selected }) => {
