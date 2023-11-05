@@ -1,12 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "./store";
-import axios from "axios";
-import { API_URL } from "../consts";
 
 interface DocumentState {
   title: string;
   content: string;
   id: string;
+  selected: boolean;
 }
 
 interface DocumentsState {
@@ -22,7 +20,21 @@ export const documentsSlice = createSlice({
   initialState,
   reducers: {
     getDocuments: (state, action: PayloadAction<DocumentState[]>) => {
-      state.documents = action.payload;
+      state.documents = action.payload.map((document) => ({
+        title: document.title,
+        content: document.content,
+        id: document.id,
+        selected: false,
+      }));
+    },
+    setSelectedDocument: (state, action: PayloadAction<string>) => {
+      state.documents = state.documents.map((document) => {
+        if (document.id === action.payload) {
+          return { ...document, selected: !document.selected };
+        } else {
+          return { ...document, selected: false };
+        }
+      });
     },
     deleteDocument: (state, action: PayloadAction<string>) => {
       state.documents = state.documents.filter(
@@ -35,7 +47,11 @@ export const documentsSlice = createSlice({
   },
 });
 
-export const { getDocuments, deleteDocument, addDocument } =
-  documentsSlice.actions;
+export const {
+  getDocuments,
+  deleteDocument,
+  addDocument,
+  setSelectedDocument,
+} = documentsSlice.actions;
 
 export default documentsSlice.reducer;

@@ -40,9 +40,9 @@ const initialScroll = {
 const DocumentsEditor = () => {
   const [client, setClient] = useState<ClientState>(initialClient);
   const [{ data, error }, setState] = useState<{
-    data: string | null;
+    data: string;
     error: string | null;
-  }>({ data: null, error: null });
+  }>({ data: " ", error: null });
   const [remoteCursors, setRemoteCursors] = useState<CursorType[] | null>([]);
   const [scrollInfo, setScrollInfo] = useState<ScrollInfo>(initialScroll);
 

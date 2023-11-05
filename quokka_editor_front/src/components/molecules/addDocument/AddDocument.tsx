@@ -19,7 +19,7 @@ const AddDocument: React.FC = () => {
       .get(API_URL + "templates/", {
         headers: { Authorization: sessionStorage.getItem("userToken") },
       })
-      .then((res) => setTemplates(res.data))
+      .then((res) => setTemplates(res.data.items))
       .catch((err) => {
         logger.log({
           level: "error",
@@ -36,7 +36,7 @@ const AddDocument: React.FC = () => {
         headers: { Authorization: sessionStorage.getItem("userToken") },
       })
       .then((res) => {
-        dispatch(addDocument(res.data));
+        dispatch(addDocument(res.data.items));
         setAddModal(!addModal);
         navigate(res.data.id);
       })
