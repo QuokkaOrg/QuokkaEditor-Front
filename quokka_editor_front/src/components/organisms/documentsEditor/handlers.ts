@@ -71,17 +71,17 @@ export const onBeforeChangeHandler = (
 };
 export const onChangeHandler = (
   generator: React.MutableRefObject<any>,
-  interval: React.MutableRefObject<number | null>,
+  interval: React.MutableRefObject<number>,
   setState: React.Dispatch<
     React.SetStateAction<{
-      data: string | null;
+      data: string;
       error: string | null;
     }>
   >,
   value: string
 ) => {
   if (!generator.current)
-    return setState({ data: null, error: "Generator is undefined" });
+    return setState({ data: " ", error: "Generator is undefined" });
   if (interval.current) clearInterval(interval.current);
   interval.current = setTimeout(() => {
     generator.current.reset();
@@ -95,8 +95,8 @@ export const onChangeHandler = (
       });
     } catch (e) {
       console.log(e);
-      if (e instanceof Error) return setState({ data: null, error: e.message });
-      return setState({ data: null, error: "Unknown error" });
+      if (e instanceof Error) return setState({ data: " ", error: e.message });
+      return setState({ data: " ", error: "Unknown error" });
     }
   }, 1000);
 };
