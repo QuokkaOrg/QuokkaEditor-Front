@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL } from "../../../consts";
+import { API_URL, PARSER_STYLES_URL } from "../../../consts";
 import { ClientState, OperationType, Pos } from "../../../types/ot";
 import { parse } from "latex.js";
 
@@ -49,7 +49,6 @@ export const onBeforeChangeHandler = (
     type: data.origin?.toUpperCase(),
   };
   if (data.origin) {
-    console.log("SENDING OPERATION: ", operation);
     if (client.sentChanges === null) {
       socket.current.send(JSON.stringify(operation));
       setClient((prevClient) => ({
@@ -64,7 +63,6 @@ export const onBeforeChangeHandler = (
         documentState: value,
       }));
     }
-    //setClient({ ...client, documentState: value });
   } else if (data.origin === undefined) {
     setClient({ ...client, documentState: value });
   }
@@ -88,13 +86,12 @@ export const onChangeHandler = (
     try {
       const parsed = parse(value, {
         generator: generator.current,
-      }).htmlDocument("https://cdn.jsdelivr.net/npm/latex.js/dist/");
+      }).htmlDocument(PARSER_STYLES_URL);
       return setState({
         data: parsed.documentElement.outerHTML,
         error: null,
       });
     } catch (e) {
-      console.log(e);
       if (e instanceof Error) return setState({ data: null, error: e.message });
       return setState({ data: null, error: "Unknown error" });
     }
