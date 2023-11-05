@@ -1,27 +1,51 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch } from "../../../Redux/hooks";
 import { API_URL } from "../../../consts";
 import axios from "axios";
 import { addDocument } from "../../../Redux/documentsSlice";
 import Modal from "../../misc/Modal";
+import { TemplateType } from "../../../types/global";
+import { useNavigate } from "react-router-dom";
+import logger from "../../../logger";
 
 const AddDocument: React.FC = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [addModal, setAddModal] = useState(false);
-  const [title, setTitle] = useState("");
+  const [templates, setTemplates] = useState<TemplateType[]>([]);
+  const [pickedTemplate, setPickedTemplate] = useState<string>("");
+  useEffect(() => {
+    axios
+      .get(API_URL + "templates/", {
+        headers: { Authorization: sessionStorage.getItem("userToken") },
+      })
+      .then((res) => setTemplates(res.data))
+      .catch((err) => {
+        logger.log({
+          level: "error",
+          message: err,
+        });
+        //TODO add error toast
+      });
+  }, []);
 
   const addDoc = () => {
     axios
-      .post(
-        API_URL + "documents/",
-        { title: title, content: "" },
-        { headers: { Authorization: sessionStorage.getItem("userToken") } }
-      )
+      .post(API_URL + "documents/", null, {
+        params: pickedTemplate && { template_id: pickedTemplate },
+        headers: { Authorization: sessionStorage.getItem("userToken") },
+      })
       .then((res) => {
         dispatch(addDocument(res.data));
         setAddModal(!addModal);
-        setTitle("");
-        alert("Document added!");
+        navigate(res.data.id);
+      })
+      .catch((err) => {
+        logger.log({
+          level: "error",
+          message: err,
+        });
+        //TODO add error toast or navigate to error page
       });
   };
 
@@ -37,14 +61,21 @@ const AddDocument: React.FC = () => {
         <Modal setShowModal={setAddModal}>
           <div className="flex flex-col justify-center items-center h-full">
             <p>Add new document</p>
-            <input
-              type="text"
-              name="title"
-              value={title}
-              placeholder="Document Title"
+            <select
               className="m-1 border-2 border-cyan-200 rounded-md p-1"
-              onChange={(e) => setTitle(e.currentTarget.value)}
-            />
+              value={pickedTemplate}
+              name="templateSelection"
+              onChange={(e) => setPickedTemplate(e.target.value)}
+            >
+              <option value="" disabled>
+                Pick a template
+              </option>
+              {templates?.map((template) => (
+                <option key={template.id} value={template.id}>
+                  {template.title}
+                </option>
+              ))}
+            </select>
             <div>
               <button
                 className="px-4 m-2 py-1 rounded-md bg-blue-500 font-bold"
