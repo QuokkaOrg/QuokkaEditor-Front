@@ -9,10 +9,12 @@ interface DocumentState {
 
 interface DocumentsState {
   documents: DocumentState[];
+  pageCount: number;
 }
 
 const initialState: DocumentsState = {
   documents: [],
+  pageCount: 0,
 };
 
 export const documentsSlice = createSlice({
@@ -26,6 +28,9 @@ export const documentsSlice = createSlice({
         id: document.id,
         selected: false,
       }));
+    },
+    getPageCount: (state, action: PayloadAction<number>) => {
+      state.pageCount = action.payload;
     },
     setSelectedDocument: (state, action: PayloadAction<string>) => {
       state.documents = state.documents.map((document) => {
@@ -49,6 +54,7 @@ export const documentsSlice = createSlice({
 
 export const {
   getDocuments,
+  getPageCount,
   deleteDocument,
   addDocument,
   setSelectedDocument,

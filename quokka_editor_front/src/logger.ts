@@ -6,4 +6,4 @@ const logger = winston.createLogger({
   defaultMeta: { service: "user-service" },
 });
 
-export default logger;
+//export default logger;

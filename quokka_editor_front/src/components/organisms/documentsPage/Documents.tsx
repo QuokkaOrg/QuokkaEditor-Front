@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../Redux/hooks";
 import { useEffect } from "react";
-import { getDocuments } from "../../../Redux/documentsSlice";
+import { getDocuments, getPageCount } from "../../../Redux/documentsSlice";
 import axios from "axios";
 import { API_URL } from "../../../consts";
 import AddDocument from "../../molecules/addDocument/AddDocument";
@@ -16,10 +16,14 @@ const Documents: React.FC = () => {
 
   useEffect(() => {
     axios
-      .get(API_URL + "documents/", {
+      .get(API_URL + "documents/?page=1&size=18", {
         headers: { Authorization: sessionStorage.getItem("userToken") },
       })
-      .then((res) => dispatch(getDocuments(res.data.items)));
+      .then((res) => {
+        console.log(res.data);
+        dispatch(getDocuments(res.data.items));
+        dispatch(getPageCount(res.data.pages));
+      });
   }, []);
 
   const logoutAction = () => {
