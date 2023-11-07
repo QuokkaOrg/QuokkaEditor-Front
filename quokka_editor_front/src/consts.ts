@@ -1,5 +1,5 @@
-export const API_URL = "https://damian-quokka-backend.eu.ngrok.io/";
-export const WEBSOCKET_URL = "wss://damian-quokka-backend.eu.ngrok.io/ws";
+export const API_URL = "http://localhost:8100/";
+export const WEBSOCKET_URL = "ws://localhost:8100/ws";
 export const ERRORS = {
   required: "This field is required",
   email: "Please provide a valid email address.",

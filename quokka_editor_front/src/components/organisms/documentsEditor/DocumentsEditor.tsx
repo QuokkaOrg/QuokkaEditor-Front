@@ -1,7 +1,4 @@
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { API_URL } from "../../../consts";
-import { useLocation } from "react-router-dom";
 
 import { Controlled as CodeMirror } from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
@@ -22,12 +19,13 @@ import {
 } from "./handlers";
 import { sendChanges } from "./ot";
 
-const initialClient = {
-  lastSyncedRevision: 0,
-  pendingChanges: [],
-  sentChanges: null,
-  documentState: "",
-};
+interface DocumentsEditorProps {
+  client: ClientState;
+  setClient:React.Dispatch<React.SetStateAction<ClientState>>,
+  id: string
+}
+
+
 const initialScroll = {
   left: 0,
   top: 0,
@@ -37,8 +35,8 @@ const initialScroll = {
   clientHeight: 0,
 };
 
-const DocumentsEditor = () => {
-  const [client, setClient] = useState<ClientState>(initialClient);
+const DocumentsEditor:React.FC<DocumentsEditorProps> = ({client,setClient,id}) => {
+  
   const [{ data, error }, setState] = useState<{
     data: string | null;
     error: string | null;
@@ -52,25 +50,6 @@ const DocumentsEditor = () => {
   const editorRef = useRef<CodeMirror.Editor | null>(null);
   const generator = useRef(new HtmlGenerator({ hyphenate: false }));
 
-  const location = useLocation();
-  const id = location.pathname.slice(
-    location.pathname.lastIndexOf("/"),
-    location.pathname.length
-  );
-
-  useEffect(() => {
-    axios
-      .get(API_URL + "documents" + id, {
-        headers: { Authorization: sessionStorage.getItem("userToken") },
-      })
-      .then((res) => {
-        setClient({
-          ...client,
-          documentState: JSON.parse(res.data.content).join("\n"),
-          lastSyncedRevision: JSON.parse(res.data.last_revision),
-        });
-      });
-  }, []);
 
   useEffect(() => {
     const s = createWebSocket(

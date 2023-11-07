@@ -2,7 +2,7 @@ interface ModalProps {
   children: React.ReactNode;
   setShowModal: (value: boolean) => void;
 }
-
+//TODO title input
 const Modal: React.FC<ModalProps> = ({ children, setShowModal }) => {
   return (
     <>
