@@ -20,7 +20,6 @@ const Documents: React.FC = () => {
         headers: { Authorization: sessionStorage.getItem("userToken") },
       })
       .then((res) => {
-        console.log(res.data);
         dispatch(getDocuments(res.data.items));
         dispatch(getPageCount(res.data.pages));
       });

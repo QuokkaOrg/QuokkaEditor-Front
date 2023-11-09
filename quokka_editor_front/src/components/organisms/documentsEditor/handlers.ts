@@ -69,7 +69,7 @@ export const onBeforeChangeHandler = (
 };
 export const onChangeHandler = (
   generator: React.MutableRefObject<any>,
-  interval: React.MutableRefObject<number>,
+  interval: React.MutableRefObject<number | null>,
   setState: React.Dispatch<
     React.SetStateAction<{
       data: string;

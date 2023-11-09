@@ -1,5 +1,5 @@
 import { OperationInputs, WEBSOCKET_URL } from "../../../consts";
-// import logger from "../../../logger";
+import logger from "../../../logger";
 import { ClientState, CursorType, OperationType } from "../../../types/ot";
 import { transform } from "./ot";
 
@@ -11,15 +11,15 @@ export const createWebSocket = (
 ) => {
   const userToken = "?token=" + sessionStorage.getItem("userToken")?.slice(7);
   const s = new WebSocket(WEBSOCKET_URL + id + userToken);
-  //TODO fix logger
+
   s.onopen = (e) => {
-    // logger.log({ level: "info", message: "Connected to WebSocket" });
+    logger.log("Connected to WebSocket");
   };
   s.onclose = (e) => {
-    // logger.log({ level: "info", message: "Disconnected from WebSocket" });
+    logger.log("Disconnected from WebSocket");
   };
   s.onerror = (err) => {
-    // logger.log({ level: "error", message: "Websocket Error: " + err });
+    logger.error("Websocket Error: " + err);
   };
   s.onmessage = (e) => {
     const eventData = JSON.parse(e.data);

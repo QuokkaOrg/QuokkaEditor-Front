@@ -6,7 +6,7 @@ import { addDocument } from "../../../Redux/documentsSlice";
 import Modal from "../../misc/Modal";
 import { TemplateType } from "../../../types/global";
 import { useNavigate } from "react-router-dom";
-//import logger from "../../../logger";
+import logger from "../../../logger";
 
 const AddDocument: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -21,10 +21,7 @@ const AddDocument: React.FC = () => {
       })
       .then((res) => setTemplates(res.data.items))
       .catch((err) => {
-        // logger.log({
-        //   level: "error",
-        //   message: err,
-        // });
+        logger.error(err);
         //TODO add error toast
       });
   }, []);
@@ -41,11 +38,8 @@ const AddDocument: React.FC = () => {
         navigate(res.data.id);
       })
       .catch((err) => {
-        // logger.log({
-        //   level: "error",
-        //   message: err,
-        // });
-        //TODO add error toast or navigate to error page, fix logger
+        logger.error(err);
+        //TODO add error toast or navigate to error page
       });
   };
 
