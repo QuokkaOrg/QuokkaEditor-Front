@@ -11,17 +11,19 @@ type PageChange = {
 
 const PaginatedDocuments: React.FC = () => {
   const dispatch = useAppDispatch();
-  const documents = useAppSelector((state) => state.documents.documents);
-  const pageCount = useAppSelector((state) => state.documents.pageCount);
+  const documents = useAppSelector((state) => state.documents.items);
+  const pageCount = useAppSelector((state) => state.documents.pages);
+  const initialPage = useAppSelector((state) => state.documents.page);
+  const pageSize = useAppSelector((state) => state.documents.size);
   const paginationStyles = "bg-slate-400 rounded-xl py-2 px-4 m-1 font-bold";
 
   const handlePageChange = (event: PageChange) => {
     axios
-      .get(API_URL + `documents/?page=${event.selected + 1}&size=18`, {
+      .get(API_URL + `documents/?page=${event.selected + 1}&size=${pageSize}`, {
         headers: { Authorization: sessionStorage.getItem("userToken") },
       })
       .then((res) => {
-        dispatch(getDocuments(res.data.items));
+        dispatch(getDocuments(res.data));
       });
   };
 
@@ -47,6 +49,7 @@ const PaginatedDocuments: React.FC = () => {
         containerClassName="flex justify-center m-4"
         activeLinkClassName="border-2 border-slate-700"
         renderOnZeroPageCount={null}
+        forcePage={initialPage - 1}
       />
     </>
   );

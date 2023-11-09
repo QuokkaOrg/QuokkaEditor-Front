@@ -11,7 +11,7 @@ interface DeleteDocumentType {
 }
 
 const DeleteDocument: React.FC = () => {
-  const documentsState = useAppSelector((state) => state.documents.documents);
+  const documentsState = useAppSelector((state) => state.documents.items);
   const dispatch = useAppDispatch();
   const [deleteModal, setDeleteModal] = useState(false);
   const [documentToDelete, setDocumentToDelete] = useState<

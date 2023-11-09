@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../Redux/hooks";
 import { useEffect } from "react";
-import { getDocuments, getPageCount } from "../../../Redux/documentsSlice";
+import { getDocuments } from "../../../Redux/documentsSlice";
 import axios from "axios";
 import { API_URL } from "../../../consts";
 import AddDocument from "../../molecules/addDocument/AddDocument";
@@ -10,18 +10,20 @@ import DocumentOptions from "../../molecules/documentsOptions/DocumentsOptions";
 import DocumentsGrid from "../../molecules/documentsGrid/DocumentsGrid";
 
 const Documents: React.FC = () => {
+  const location = useLocation();
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
 
+  const params = location.search;
+
   useEffect(() => {
     axios
-      .get(API_URL + "documents/?page=1&size=18", {
+      .get(API_URL + `documents/${params}`, {
         headers: { Authorization: sessionStorage.getItem("userToken") },
       })
       .then((res) => {
-        dispatch(getDocuments(res.data.items));
-        dispatch(getPageCount(res.data.pages));
+        dispatch(getDocuments(res.data));
       });
   }, []);
 
