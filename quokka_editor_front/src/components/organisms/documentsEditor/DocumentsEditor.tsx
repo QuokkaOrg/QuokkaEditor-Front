@@ -21,10 +21,9 @@ import { sendChanges } from "./ot";
 
 interface DocumentsEditorProps {
   client: ClientState;
-  setClient:React.Dispatch<React.SetStateAction<ClientState>>,
-  id: string
+  setClient: React.Dispatch<React.SetStateAction<ClientState>>;
+  id: string;
 }
-
 
 const initialScroll = {
   left: 0,
@@ -35,8 +34,11 @@ const initialScroll = {
   clientHeight: 0,
 };
 
-const DocumentsEditor:React.FC<DocumentsEditorProps> = ({client,setClient,id}) => {
-  
+const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
+  client,
+  setClient,
+  id,
+}) => {
   const [{ data, error }, setState] = useState<{
     data: string | null;
     error: string | null;
@@ -49,7 +51,6 @@ const DocumentsEditor:React.FC<DocumentsEditorProps> = ({client,setClient,id}) =
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const editorRef = useRef<CodeMirror.Editor | null>(null);
   const generator = useRef(new HtmlGenerator({ hyphenate: false }));
-
 
   useEffect(() => {
     const s = createWebSocket(
