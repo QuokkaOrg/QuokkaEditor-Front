@@ -13,12 +13,14 @@ export const createWebSocket = (
   const s = new WebSocket(WEBSOCKET_URL + id + userToken);
 
   s.onopen = (e) => {
-    logger.log({ level: "info", message: "Connected to WebSocket" });
+    logger.log("Connected to WebSocket");
   };
-  s.onclose = (e) =>
-    logger.log({ level: "info", message: "Disconnected from WebSocket" });
-  s.onerror = (err) =>
-    logger.log({ level: "error", message: "Websocket Error: " + err });
+  s.onclose = (e) => {
+    logger.log("Disconnected from WebSocket");
+  };
+  s.onerror = (err) => {
+    logger.error("Websocket Error: " + err);
+  };
   s.onmessage = (e) => {
     const eventData = JSON.parse(e.data);
 

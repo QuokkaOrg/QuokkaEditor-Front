@@ -8,27 +8,36 @@ interface DocumentState {
 }
 
 interface DocumentsState {
-  documents: DocumentState[];
+  items: DocumentState[];
+  pages: number;
+  page: number;
+  size: number;
 }
 
 const initialState: DocumentsState = {
-  documents: [],
+  items: [],
+  pages: 0,
+  page: 1,
+  size: 50,
 };
 
 export const documentsSlice = createSlice({
   name: "documents",
   initialState,
   reducers: {
-    getDocuments: (state, action: PayloadAction<DocumentState[]>) => {
-      state.documents = action.payload.map((document) => ({
+    getDocuments: (state, action: PayloadAction<DocumentsState>) => {
+      state.items = action.payload.items.map((document) => ({
         title: document.title,
         content: document.content,
         id: document.id,
         selected: false,
       }));
+      state.pages = action.payload.pages;
+      state.page = action.payload.page;
+      state.size = action.payload.size;
     },
     setSelectedDocument: (state, action: PayloadAction<string>) => {
-      state.documents = state.documents.map((document) => {
+      state.items = state.items.map((document) => {
         if (document.id === action.payload) {
           return { ...document, selected: !document.selected };
         } else {
@@ -37,12 +46,12 @@ export const documentsSlice = createSlice({
       });
     },
     deleteDocument: (state, action: PayloadAction<string>) => {
-      state.documents = state.documents.filter(
+      state.items = state.items.filter(
         (document) => document.id !== action.payload
       );
     },
     addDocument: (state, action: PayloadAction<DocumentState>) => {
-      state.documents = [...state.documents, action.payload];
+      state.items = [...state.items, action.payload];
     },
   },
 });

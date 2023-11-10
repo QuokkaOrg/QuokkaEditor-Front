@@ -21,10 +21,7 @@ const AddDocument: React.FC = () => {
       })
       .then((res) => setTemplates(res.data.items))
       .catch((err) => {
-        logger.log({
-          level: "error",
-          message: err,
-        });
+        logger.error(err);
         //TODO add error toast
       });
   }, []);
@@ -36,15 +33,12 @@ const AddDocument: React.FC = () => {
         headers: { Authorization: sessionStorage.getItem("userToken") },
       })
       .then((res) => {
-        dispatch(addDocument(res.data.items));
+        dispatch(addDocument(res.data));
         setAddModal(!addModal);
         navigate(res.data.id);
       })
       .catch((err) => {
-        logger.log({
-          level: "error",
-          message: err,
-        });
+        logger.error(err);
         //TODO add error toast or navigate to error page
       });
   };
