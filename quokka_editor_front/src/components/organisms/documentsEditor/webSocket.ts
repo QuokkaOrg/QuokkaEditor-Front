@@ -1,4 +1,5 @@
 import { OperationInputs, WEBSOCKET_URL } from "../../../consts";
+import logger from "../../../logger";
 import { ClientState, CursorType, OperationType } from "../../../types/ot";
 import { transform } from "./ot";
 
@@ -10,11 +11,16 @@ export const createWebSocket = (
 ) => {
   const userToken = "?token=" + sessionStorage.getItem("userToken")?.slice(7);
   const s = new WebSocket(WEBSOCKET_URL + id + userToken);
+
   s.onopen = (e) => {
-    console.log("Connected to WebSocket");
+    logger.log("Connected to WebSocket");
   };
-  s.onclose = (e) => console.log("Disconnected from WebSocket");
-  s.onerror = (err) => console.error("Websocket Error: " + err);
+  s.onclose = (e) => {
+    logger.log("Disconnected from WebSocket");
+  };
+  s.onerror = (err) => {
+    logger.error("Websocket Error: " + err);
+  };
   s.onmessage = (e) => {
     const eventData = JSON.parse(e.data);
 
@@ -35,7 +41,6 @@ export const createWebSocket = (
     if (!eventData.data) {
       const message: OperationType = JSON.parse(e.data);
       if (message.text) {
-        console.log("REVISION :: ", eventData.revision);
         setClient((prevClient) => ({
           ...prevClient,
           pendingChanges: prevClient.pendingChanges.map((change) =>
@@ -46,8 +51,6 @@ export const createWebSocket = (
         editor?.replaceRange(message.text, message.from_pos, message.to_pos);
       }
       if (message.type === OperationInputs.DELETE) {
-        console.log("REVISION DELETE :: ", eventData.revision);
-
         setClient((prevClient) => ({
           ...prevClient,
           pendingChanges: prevClient.pendingChanges.map((change) =>
@@ -58,13 +61,11 @@ export const createWebSocket = (
       }
     } else {
       const cursorData = eventData.data;
-      console.log(cursorData);
       const remoteCursor: CursorType = {
         token: eventData.user_token,
         ch: cursorData.data.ch,
         line: cursorData.data.line,
       };
-      console.log(remoteCursor);
 
       setRemoteCursors((currCursors) => {
         if (!currCursors) return [remoteCursor];

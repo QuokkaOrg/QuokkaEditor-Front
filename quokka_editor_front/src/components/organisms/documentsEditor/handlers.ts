@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL } from "../../../consts";
+import { API_URL, PARSER_STYLES_URL } from "../../../consts";
 import { ClientState, OperationType, Pos } from "../../../types/ot";
 import { parse } from "latex.js";
 
@@ -49,7 +49,6 @@ export const onBeforeChangeHandler = (
     type: data.origin?.toUpperCase(),
   };
   if (data.origin) {
-    console.log("SENDING OPERATION: ", operation);
     if (client.sentChanges === null) {
       socket.current.send(JSON.stringify(operation));
       setClient((prevClient) => ({
@@ -64,7 +63,6 @@ export const onBeforeChangeHandler = (
         documentState: value,
       }));
     }
-    //setClient({ ...client, documentState: value });
   } else if (data.origin === undefined) {
     setClient({ ...client, documentState: value });
   }
@@ -74,29 +72,28 @@ export const onChangeHandler = (
   interval: React.MutableRefObject<number | null>,
   setState: React.Dispatch<
     React.SetStateAction<{
-      data: string | null;
+      data: string;
       error: string | null;
     }>
   >,
   value: string
 ) => {
   if (!generator.current)
-    return setState({ data: null, error: "Generator is undefined" });
+    return setState({ data: " ", error: "Generator is undefined" });
   if (interval.current) clearInterval(interval.current);
   interval.current = setTimeout(() => {
     generator.current.reset();
     try {
       const parsed = parse(value, {
         generator: generator.current,
-      }).htmlDocument("https://cdn.jsdelivr.net/npm/latex.js/dist/");
+      }).htmlDocument(PARSER_STYLES_URL);
       return setState({
         data: parsed.documentElement.outerHTML,
         error: null,
       });
     } catch (e) {
-      console.log(e);
-      if (e instanceof Error) return setState({ data: null, error: e.message });
-      return setState({ data: null, error: "Unknown error" });
+      if (e instanceof Error) return setState({ data: " ", error: e.message });
+      return setState({ data: " ", error: "Unknown error" });
     }
   }, 1000);
 };

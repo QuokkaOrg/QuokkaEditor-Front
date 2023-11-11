@@ -6,6 +6,7 @@ import { addDocument } from "../../../Redux/documentsSlice";
 import Modal from "../../misc/Modal";
 import { TemplateType } from "../../../types/global";
 import { useNavigate } from "react-router-dom";
+import logger from "../../../logger";
 
 const AddDocument: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -18,8 +19,10 @@ const AddDocument: React.FC = () => {
       .get(API_URL + "templates/", {
         headers: { Authorization: sessionStorage.getItem("userToken") },
       })
-      .then((res) => {
-        setTemplates(res.data.items);
+      .then((res) => setTemplates(res.data.items))
+      .catch((err) => {
+        logger.error(err);
+        //TODO add error toast
       });
   }, []);
 
@@ -34,7 +37,10 @@ const AddDocument: React.FC = () => {
         setAddModal(!addModal);
         navigate(res.data.id);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        logger.error(err);
+        //TODO add error toast or navigate to error page
+      });
   };
 
   return (

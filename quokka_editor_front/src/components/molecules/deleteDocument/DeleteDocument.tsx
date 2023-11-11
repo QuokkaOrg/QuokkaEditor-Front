@@ -4,7 +4,6 @@ import { API_URL } from "../../../consts";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { deleteDocument } from "../../../Redux/documentsSlice";
 import Modal from "../../misc/Modal";
-import DocumentButton from "../../atoms/documentButton/DocumentButton";
 
 interface DeleteDocumentType {
   id: string;
@@ -12,7 +11,7 @@ interface DeleteDocumentType {
 }
 
 const DeleteDocument: React.FC = () => {
-  const documentsState = useAppSelector((state) => state.documents.documents);
+  const documentsState = useAppSelector((state) => state.documents.items);
   const dispatch = useAppDispatch();
   const [deleteModal, setDeleteModal] = useState(false);
   const [documentToDelete, setDocumentToDelete] = useState<
