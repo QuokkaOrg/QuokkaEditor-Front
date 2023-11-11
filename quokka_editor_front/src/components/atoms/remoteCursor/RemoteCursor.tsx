@@ -23,18 +23,23 @@ const RemoteCursor: React.FC<RemoteCursorProps> = ({
     document.getElementById("EditorNavBar")?.clientHeight;
   const editorFilesBarHeight =
     document.getElementById("FilesBar")?.clientHeight;
+  const adjustedTop =
+    top -
+    scrollInfo.top +
+    (editorNavBarHeight || 0) +
+    (editorFilesBarHeight || 0);
+  const adjustedLeft = left - scrollInfo.left + linesGutter[0].clientWidth;
   return (
     <div
       id="remote-cursor"
-      className={`group absolute w-[1px] h-[19.5px] z-10 flex`}
+      className={`group absolute w-[1.5px] h-[19.5px] z-10 flex ${
+        adjustedTop > window.innerHeight || adjustedLeft > window.innerWidth
+          ? "hidden"
+          : "visible"
+      }`}
       style={{
-        left: `${left - scrollInfo.left + linesGutter[0].clientWidth}px`,
-        top: `${
-          top -
-          scrollInfo.top +
-          (editorNavBarHeight || 0) +
-          (editorFilesBarHeight || 0)
-        }px`,
+        left: `${adjustedLeft}px`,
+        top: `${adjustedTop}px`,
         backgroundColor: clientColor,
       }}
     >
