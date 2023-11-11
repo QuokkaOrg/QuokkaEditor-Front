@@ -66,7 +66,14 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
   useEffect(() => {
     const handler = () => {
       const height = window.innerHeight;
-      editorRef.current?.setSize("100%", height);
+      const navbarHeight =
+        document.getElementById("EditorNavBar")?.clientHeight || 0;
+      const fileBarHeight =
+        document.getElementById("FilesBar")?.clientHeight || 0;
+      editorRef.current?.setSize(
+        "100%",
+        height - (navbarHeight + fileBarHeight)
+      );
       if (!iframeRef.current) return;
       const width = iframeRef.current.getBoundingClientRect().width;
       iframeRef.current.contentWindow?.document.body.setAttribute(
@@ -83,7 +90,7 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
   }, [client.sentChanges]);
 
   return (
-    <div className="grid grid-cols-2 h-screen">
+    <div className="grid grid-cols-2">
       <CodeMirror
         editorDidMount={(editor) => {
           editorRef.current = editor;
@@ -120,20 +127,20 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
         />
       ))}
 
-      <div className="bg-orange-200 p-16">
-        <button
+      <div className="bg-project-theme-dark-350 px-8 py-4">
+        {/* <button
           className="rounded-full px-6 py-3 flex items-center justify-center bg-purple-500 text-white text-2xl absolute right-8 bottom-8 shadow-xl"
           type="button"
           onClick={() => getPDFHandler(id)}
         >
           Download PDF
-        </button>
+        </button> */}
         {error || !data ? (
           <p>{error || "Loading..."}</p>
         ) : (
           <iframe
             ref={iframeRef}
-            className="w-full h-full bg-white shadow-lg p-8"
+            className="w-full h-full bg-slate-50 shadow-lg shadow-slate-600"
             srcDoc={data}
           ></iframe>
         )}
