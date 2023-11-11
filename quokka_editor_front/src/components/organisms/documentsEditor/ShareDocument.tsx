@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from "../../misc/Modal";
-import { useLocation } from "react-router-dom";
-import { useAppSelector } from "../../../Redux/hooks";
 import axios from "axios";
 import { API_URL } from "../../../consts";
 import { DocumentState } from "../../../Redux/documentsSlice";
@@ -22,6 +20,7 @@ const ShareDocument: React.FC<ShareDocumentProps> = ({
   setDocumentPrivileges,
 }) => {
   const [shareModal, setShareModal] = useState<boolean>(false);
+
   const changePrivilegesHandler = (privileges: string) => {
     axios
       .post(
@@ -61,6 +60,10 @@ const ShareDocument: React.FC<ShareDocumentProps> = ({
         }
       )
       .then((res) => {
+        setDocumentPrivileges((currDocument) => ({
+          ...currDocument,
+          shared_by_link: !currDocument.shared_by_link,
+        }));
         //TODO change alert to toast
         alert(
           "Document " +

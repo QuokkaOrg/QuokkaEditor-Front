@@ -45,40 +45,42 @@ const EditorPage = () => {
           documentState: JSON.parse(res.data.content).join("\n"),
           lastSyncedRevision: JSON.parse(res.data.last_revision),
         });
-        console.log(res.data);
         setDocument(res.data);
       });
   }, []);
 
   return (
     <div id="EditorContainer" className="flex flex-col">
-      <div
-        id="NavBar"
-        className="flex justify-between items-center mx-6 bg-project-theme-dark-300 text-white m-5"
-      >
-        <DocumentTitleUpdate title={document.title} />
-        <div className="flex text-[#B9B9B9]">
-          <button className="mx-6 flex text-[25px]">
-            File <img src="/arrow.svg" className="p-4"></img>
-          </button>
-          <button className="mx-6 flex text-[25px]">
-            {" "}
-            Edit <img src="/arrow.svg" className="p-4"></img>
-          </button>
-          <button className="mx-6 flex text-[25px]">
-            Insert <img src="/arrow.svg" className="p-4"></img>
-          </button>
+      <div id="EditorNavBar">
+        <div className="flex justify-between items-center mx-6 bg-project-theme-dark-300 text-white m-5">
+          <DocumentTitleUpdate
+            id={id}
+            title={document.title}
+            setTitle={setDocument}
+          />
+          <div className="flex text-[#B9B9B9]">
+            <button className="mx-6 flex text-[25px]">
+              File <img src="/arrow.svg" className="p-4"></img>
+            </button>
+            <button className="mx-6 flex text-[25px]">
+              {" "}
+              Edit <img src="/arrow.svg" className="p-4"></img>
+            </button>
+            <button className="mx-6 flex text-[25px]">
+              Insert <img src="/arrow.svg" className="p-4"></img>
+            </button>
+          </div>
+          {/* todo share onclick*/}
+          <ShareDocument
+            docId={id}
+            title={document.title}
+            isShared={document.shared_by_link}
+            sharedPrivileges={document.shared_role}
+            setDocumentPrivileges={setDocument}
+          />
         </div>
-        {/* todo share onclick*/}
-        <ShareDocument
-          docId={id}
-          title={document.title}
-          isShared={document.shared_by_link}
-          sharedPrivileges={document.shared_role}
-          setDocumentPrivileges={setDocument}
-        />
       </div>
-      <div className="bg-project-there-dark-400 bg-[#3A3C4E] p-1">
+      <div id="FilesBar" className="bg-project-there-dark-400 bg-[#3A3C4E] p-1">
         <img src="/typesrc.svg" className="ml-1"></img>
       </div>
       <DocumentsEditor client={client} setClient={setClient} id={id} />
