@@ -18,6 +18,7 @@ import {
   onCursorHandler,
 } from "./handlers";
 import { sendChanges } from "./ot";
+import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 
 interface DocumentsEditorProps {
   client: ClientState;
@@ -43,7 +44,6 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
     data: string;
     error: string | null;
   }>({ data: " ", error: null });
-  const [remoteCursors, setRemoteCursors] = useState<CursorType[] | null>([]);
   const [scrollInfo, setScrollInfo] = useState<ScrollInfo>(initialScroll);
 
   const socket = useRef<WebSocket | null>(null);
@@ -52,13 +52,11 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
   const editorRef = useRef<CodeMirror.Editor | null>(null);
   const generator = useRef(new HtmlGenerator({ hyphenate: false }));
 
+  const dispatch = useAppDispatch();
+  const remoteClients = useAppSelector((state) => state.clients.clients);
+
   useEffect(() => {
-    const s = createWebSocket(
-      id,
-      editorRef.current,
-      setClient,
-      setRemoteCursors
-    );
+    const s = createWebSocket(id, editorRef.current, setClient, dispatch);
     socket.current = s;
     return () => s.close();
   }, []);
@@ -118,14 +116,16 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
           setScrollInfo(editorRef.current.getScrollInfo());
         }}
       />
-      {remoteCursors?.map((cursor) => (
-        <RemoteCursor
-          key={cursor.token}
-          cursorData={cursor}
-          editor={editorRef.current}
-          scrollInfo={scrollInfo}
-        />
-      ))}
+      {remoteClients?.map((cursor) => {
+        return (
+          <RemoteCursor
+            key={cursor.token}
+            cursorData={cursor}
+            editor={editorRef.current}
+            scrollInfo={scrollInfo}
+          />
+        );
+      })}
 
       <div className="bg-project-theme-dark-350 px-8 py-4">
         {/* <button

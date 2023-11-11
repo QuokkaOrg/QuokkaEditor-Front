@@ -9,7 +9,7 @@ export interface DocumentState {
   shared_by_link: boolean;
 }
 
-interface DocumentsState {
+export interface DocumentsState {
   items: DocumentState[];
   pages: number;
   page: number;
