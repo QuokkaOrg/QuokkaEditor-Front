@@ -1,13 +1,32 @@
+import { ThunkDispatch } from "redux-thunk";
+import {
+  RemoteClient,
+  RemoteClients,
+  addRemoteClient,
+  deleteRemoteClient,
+  updateRemoteClient,
+} from "../../../Redux/clientsSlice";
 import { OperationInputs, WEBSOCKET_URL } from "../../../consts";
 import logger from "../../../logger";
 import { ClientState, CursorType, OperationType } from "../../../types/ot";
 import { transform } from "./ot";
+import { AnyAction, Dispatch } from "redux";
+import { DocumentsState } from "../../../Redux/documentsSlice";
+import { store } from "../../../Redux/store";
 
 export const createWebSocket = (
   id: string,
   editor: CodeMirror.Editor | null,
   setClient: React.Dispatch<React.SetStateAction<ClientState>>,
-  setRemoteCursors: React.Dispatch<React.SetStateAction<CursorType[] | null>>
+  dispatchClients: ThunkDispatch<
+    {
+      documents: DocumentsState;
+      clients: RemoteClients;
+    },
+    undefined,
+    AnyAction
+  > &
+    Dispatch<AnyAction>
 ) => {
   const userToken = "?token=" + sessionStorage.getItem("userToken")?.slice(7);
   const s = new WebSocket(WEBSOCKET_URL + id + userToken);
@@ -23,7 +42,6 @@ export const createWebSocket = (
   };
   s.onmessage = (e) => {
     const eventData = JSON.parse(e.data);
-
     if (eventData.message === "ACK") {
       setClient((prevClient) => ({
         ...prevClient,
@@ -31,12 +49,7 @@ export const createWebSocket = (
         sentChanges: null,
       }));
     } else if (eventData.message) {
-      setRemoteCursors((currCursors) => {
-        if (!currCursors) return null;
-        return currCursors.filter(
-          (cursor) => cursor.token === eventData.user_token
-        );
-      });
+      dispatchClients(deleteRemoteClient(eventData.user_token));
     }
     if (!eventData.data) {
       const message: OperationType = JSON.parse(e.data);
@@ -66,22 +79,15 @@ export const createWebSocket = (
         ch: cursorData.data.ch,
         line: cursorData.data.line,
       };
-
-      setRemoteCursors((currCursors) => {
-        if (!currCursors) return [remoteCursor];
-        if (
-          !currCursors.find((cursor) => cursor.token === remoteCursor.token)
-        ) {
-          return [...currCursors, remoteCursor];
-        } else {
-          const updatedCursors = currCursors.map((cursor) => {
-            if (cursor.token === remoteCursor.token) return remoteCursor;
-            else return cursor;
-          });
-
-          return updatedCursors;
-        }
-      });
+      const remoteClients = store.getState().clients.clients;
+      if (
+        !remoteClients ||
+        !remoteClients.find((client) => client.token === remoteCursor.token)
+      ) {
+        dispatchClients(addRemoteClient(remoteCursor));
+      } else {
+        dispatchClients(updateRemoteClient(remoteCursor));
+      }
     }
   };
   return s;

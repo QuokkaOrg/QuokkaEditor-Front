@@ -1,13 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface DocumentState {
+export interface DocumentState {
   title: string;
   content: string;
   id: string;
   selected: boolean;
+  shared_role: string;
+  shared_by_link: boolean;
 }
 
-interface DocumentsState {
+export interface DocumentsState {
   items: DocumentState[];
   pages: number;
   page: number;
@@ -31,6 +33,8 @@ export const documentsSlice = createSlice({
         content: document.content,
         id: document.id,
         selected: false,
+        shared_role: document.shared_role,
+        shared_by_link: document.shared_by_link,
       }));
       state.pages = action.payload.pages;
       state.page = action.payload.page;

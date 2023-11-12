@@ -26,7 +26,7 @@ const DocumentBox: React.FC<DocumentBoxProps> = ({ title, id, selected }) => {
     <div
       className={`${
         selected ? "border-2 border-cyan-500 shadow-md" : null
-      } h-48 w-56 rounded-md bg-[#ffe7c9]`}
+      } h-48 w-56 rounded-md text-white bg-[#20222B]`}
       onDoubleClick={onDoubleClickHandler}
       onClick={onClickHandler}
     >

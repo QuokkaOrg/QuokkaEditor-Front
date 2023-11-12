@@ -1,8 +1,9 @@
 import { ScrollInfo } from "codemirror";
 import { CursorType } from "../../../types/ot";
+import { RemoteClient } from "../../../Redux/clientsSlice";
 
 interface RemoteCursorProps {
-  cursorData: CursorType;
+  cursorData: RemoteClient;
   editor: CodeMirror.Editor | null;
   scrollInfo: ScrollInfo;
 }
@@ -12,25 +13,44 @@ const RemoteCursor: React.FC<RemoteCursorProps> = ({
   editor,
   scrollInfo,
 }) => {
-  const { token, ch, line } = cursorData;
+  const { token, ch, line, clientColor } = cursorData;
 
   if (!editor) return null;
   const { left, top } = editor.charCoords({ ch, line }, "local");
   const linesGutter = editor.getGutterElement().children;
   const lineHeight = editor.defaultTextHeight();
+  const editorNavBarHeight =
+    document.getElementById("EditorNavBar")?.clientHeight;
+  const editorFilesBarHeight =
+    document.getElementById("FilesBar")?.clientHeight;
+  const adjustedTop =
+    top -
+    scrollInfo.top +
+    (editorNavBarHeight || 0) +
+    (editorFilesBarHeight || 0);
+  const adjustedLeft = left - scrollInfo.left + linesGutter[0].clientWidth;
   return (
     <div
       id="remote-cursor"
-      className="group absolute w-[1px] h-[19.5px] bg-red-500 z-10 flex"
+      className={`group absolute w-[1.5px] h-[19.5px] z-10 flex ${
+        adjustedTop > window.innerHeight || adjustedLeft > window.innerWidth
+          ? "hidden"
+          : "visible"
+      }`}
       style={{
-        left: `${left - scrollInfo.left + linesGutter[0].clientWidth}px`,
-        top: `${top - scrollInfo.top}px`,
+        left: `${adjustedLeft}px`,
+        top: `${adjustedTop}px`,
+        backgroundColor: clientColor,
       }}
     >
       &nbsp;
       <div
-        className=" bg-red-700 border-red-700 border-2 absolute invisible group-hover:visible text-xs"
-        style={{ top: `${-lineHeight}px` }}
+        className={` border-2 absolute invisible group-hover:visible text-xs`}
+        style={{
+          top: `${-lineHeight}px`,
+          backgroundColor: clientColor,
+          borderColor: clientColor,
+        }}
       >
         {token}
       </div>

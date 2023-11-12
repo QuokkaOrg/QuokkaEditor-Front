@@ -1,7 +1,4 @@
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { API_URL } from "../../../consts";
-import { useLocation } from "react-router-dom";
 
 import { Controlled as CodeMirror } from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
@@ -21,13 +18,14 @@ import {
   onCursorHandler,
 } from "./handlers";
 import { sendChanges } from "./ot";
+import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 
-const initialClient = {
-  lastSyncedRevision: 0,
-  pendingChanges: [],
-  sentChanges: null,
-  documentState: "",
-};
+interface DocumentsEditorProps {
+  client: ClientState;
+  setClient: React.Dispatch<React.SetStateAction<ClientState>>;
+  id: string;
+}
+
 const initialScroll = {
   left: 0,
   top: 0,
@@ -37,13 +35,15 @@ const initialScroll = {
   clientHeight: 0,
 };
 
-const DocumentsEditor = () => {
-  const [client, setClient] = useState<ClientState>(initialClient);
+const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
+  client,
+  setClient,
+  id,
+}) => {
   const [{ data, error }, setState] = useState<{
     data: string;
     error: string | null;
   }>({ data: " ", error: null });
-  const [remoteCursors, setRemoteCursors] = useState<CursorType[] | null>([]);
   const [scrollInfo, setScrollInfo] = useState<ScrollInfo>(initialScroll);
 
   const socket = useRef<WebSocket | null>(null);
@@ -52,33 +52,11 @@ const DocumentsEditor = () => {
   const editorRef = useRef<CodeMirror.Editor | null>(null);
   const generator = useRef(new HtmlGenerator({ hyphenate: false }));
 
-  const location = useLocation();
-  const id = location.pathname.slice(
-    location.pathname.lastIndexOf("/"),
-    location.pathname.length
-  );
+  const dispatch = useAppDispatch();
+  const remoteClients = useAppSelector((state) => state.clients.clients);
 
   useEffect(() => {
-    axios
-      .get(API_URL + "documents" + id, {
-        headers: { Authorization: sessionStorage.getItem("userToken") },
-      })
-      .then((res) => {
-        setClient({
-          ...client,
-          documentState: JSON.parse(res.data.content).join("\n"),
-          lastSyncedRevision: JSON.parse(res.data.last_revision),
-        });
-      });
-  }, []);
-
-  useEffect(() => {
-    const s = createWebSocket(
-      id,
-      editorRef.current,
-      setClient,
-      setRemoteCursors
-    );
+    const s = createWebSocket(id, editorRef.current, setClient, dispatch);
     socket.current = s;
     return () => s.close();
   }, []);
@@ -86,7 +64,14 @@ const DocumentsEditor = () => {
   useEffect(() => {
     const handler = () => {
       const height = window.innerHeight;
-      editorRef.current?.setSize("100%", height);
+      const navbarHeight =
+        document.getElementById("EditorNavBar")?.clientHeight || 0;
+      const fileBarHeight =
+        document.getElementById("FilesBar")?.clientHeight || 0;
+      editorRef.current?.setSize(
+        "100%",
+        height - (navbarHeight + fileBarHeight)
+      );
       if (!iframeRef.current) return;
       const width = iframeRef.current.getBoundingClientRect().width;
       iframeRef.current.contentWindow?.document.body.setAttribute(
@@ -103,7 +88,7 @@ const DocumentsEditor = () => {
   }, [client.sentChanges]);
 
   return (
-    <div className="grid grid-cols-2 h-screen">
+    <div className="grid grid-cols-2">
       <CodeMirror
         editorDidMount={(editor) => {
           editorRef.current = editor;
@@ -131,29 +116,24 @@ const DocumentsEditor = () => {
           setScrollInfo(editorRef.current.getScrollInfo());
         }}
       />
-      {remoteCursors?.map((cursor) => (
-        <RemoteCursor
-          key={cursor.token}
-          cursorData={cursor}
-          editor={editorRef.current}
-          scrollInfo={scrollInfo}
-        />
-      ))}
+      {remoteClients?.map((cursor) => {
+        return (
+          <RemoteCursor
+            key={cursor.token}
+            cursorData={cursor}
+            editor={editorRef.current}
+            scrollInfo={scrollInfo}
+          />
+        );
+      })}
 
-      <div className="bg-orange-200 p-16">
-        <button
-          className="rounded-full px-6 py-3 flex items-center justify-center bg-purple-500 text-white text-2xl absolute right-8 bottom-8 shadow-xl"
-          type="button"
-          onClick={() => getPDFHandler(id)}
-        >
-          Download PDF
-        </button>
+      <div className="bg-project-theme-dark-350 px-8 py-4">
         {error || !data ? (
           <p>{error || "Loading..."}</p>
         ) : (
           <iframe
             ref={iframeRef}
-            className="w-full h-full bg-white shadow-lg p-8"
+            className="w-full h-full bg-slate-50 shadow-lg shadow-slate-600"
             srcDoc={data}
           ></iframe>
         )}
