@@ -13,8 +13,12 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col justify-center items-center">
-      <h1 className="text-3xl font-bold">Login</h1>
+    <div className="flex flex-col justify-center items-center p-9">
+      <div className ="w-56 m-9 relative shadow rounded-[30px]">
+        <div className="top-0 left-0 absolute w-[115px] h-10 bg-gradient-to-r from-[#1f21292e] to-[#5F6066] rounded-[30px]"></div>
+            <button type="button" className="relative px-8 py-2 cursor-pointer bg-transparent border-none outline-none text-white">Log in</button>
+            <button type="button" className="relative px-7 py-2 cursor-pointer bg-transparent border-none outline-none text-[#ffffff29]">Register</button>
+      </div>
       <Formik
         initialValues={{ username: "", password: "" }}
         onSubmit={(values: Login) =>
@@ -29,29 +33,23 @@ const Login: React.FC = () => {
         }
       >
         {() => (
-          <Form className="flex flex-col justify-center w-52">
-            <label htmlFor="username">Username</label>
+          <Form className="flex flex-col w-72 top-44 transition delay-150">
             <Field
               id="username"
               name="username"
               placeholder="Username"
-              className="border border-black rounded-md p-0.5"
+              className="px-0 py-3 mx-0 my-1 border-b outline-none bg-transparent text-white"
             />
-
-            <label htmlFor="password">Password</label>
             <Field
               id="password"
               name="password"
               placeholder="Password"
               type="password"
-              className="border border-black rounded-md p-0.5"
+              className="px-0 py-3 mx-0 my-1 border-b outline-none bg-transparent text-white"
             />
-            <Link to={"register"} className="text-sm text-blue-600">
-              Don't have an account?
-            </Link>
             <button
               type="submit"
-              className="bg-slate-600 text-white rounded-full w-1/2 self-center font-semibold m-2 p-1"
+              className="px-7 py-2 m-auto cursor-pointer bg-[#15172365] border-none shadow outline-none rounded-[30px] text-white mt-2"
             >
               Login
             </button>
