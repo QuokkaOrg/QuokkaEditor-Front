@@ -3,6 +3,7 @@ import * as Yup from "yup";
 import { API_URL } from "../../../consts";
 import axios from "axios";
 import { ERRORS } from "../../../errors";
+import { Link, useNavigate } from "react-router-dom";
 
 interface Register {
   username: string;
@@ -22,7 +23,9 @@ const Register: React.FC = () => {
     <div className="flex flex-col justify-center items-center p-9">
       <div className ="w-56 m-9 relative shadow rounded-[30px]">
         <div className="top-0 right-0 absolute w-[115px] h-10 bg-gradient-to-r from-[#5F6066] to-[#1f21292e] rounded-[30px]"></div>
+          <Link to={"/"}>
             <button type="button" className="relative px-7 py-2 cursor-pointer bg-transparent border-none outline-none text-[#ffffff29]">Log in</button>
+          </Link>
             <button type="button" className="relative px-8 py-2 cursor-pointer bg-transparent border-none outline-none text-white">Register</button>
       </div>
       <Formik

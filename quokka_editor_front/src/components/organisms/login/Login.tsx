@@ -17,7 +17,9 @@ const Login: React.FC = () => {
       <div className ="w-56 m-9 relative shadow rounded-[30px]">
         <div className="top-0 left-0 absolute w-[115px] h-10 bg-gradient-to-r from-[#1f21292e] to-[#5F6066] rounded-[30px]"></div>
             <button type="button" className="relative px-8 py-2 cursor-pointer bg-transparent border-none outline-none text-white">Log in</button>
-            <button type="button" className="relative px-7 py-2 cursor-pointer bg-transparent border-none outline-none text-[#ffffff29]">Register</button>
+            <Link to={"register"}>
+              <button type="button" className="relative px-7 py-2 cursor-pointer bg-transparent border-none outline-none text-[#ffffff29]">Register</button>
+            </Link>
       </div>
       <Formik
         initialValues={{ username: "", password: "" }}
