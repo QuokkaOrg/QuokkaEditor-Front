@@ -128,13 +128,6 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
       })}
 
       <div className="bg-project-theme-dark-350 px-8 py-4">
-        {/* <button
-          className="rounded-full px-6 py-3 flex items-center justify-center bg-purple-500 text-white text-2xl absolute right-8 bottom-8 shadow-xl"
-          type="button"
-          onClick={() => getPDFHandler(id)}
-        >
-          Download PDF
-        </button> */}
         {error || !data ? (
           <p>{error || "Loading..."}</p>
         ) : (

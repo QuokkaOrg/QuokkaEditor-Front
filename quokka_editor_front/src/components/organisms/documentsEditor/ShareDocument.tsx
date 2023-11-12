@@ -89,7 +89,7 @@ const ShareDocument: React.FC<ShareDocumentProps> = ({
           <img src="/sharesrc.svg"></img>
         </div>
       </div>
-      {shareModal ? (
+      {shareModal && (
         <Modal setShowModal={setShareModal}>
           <div className="p-1 flex flex-col justify-center text-center items-center h-full text-white">
             <p>Do you want to share "{title}"?</p>
@@ -142,7 +142,7 @@ const ShareDocument: React.FC<ShareDocumentProps> = ({
             </div>
           </div>
         </Modal>
-      ) : null}
+      )}
     </>
   );
 };
