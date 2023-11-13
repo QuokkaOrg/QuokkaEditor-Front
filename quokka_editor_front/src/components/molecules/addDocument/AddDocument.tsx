@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch } from "../../../Redux/hooks";
-import { API_URL } from "../../../consts";
-import axios from "axios";
-import { addDocument } from "../../../Redux/documentsSlice";
 import Modal from "../../misc/Modal";
 import { TemplateType } from "../../../types/global";
 import { useNavigate } from "react-router-dom";
 import logger from "../../../logger";
+import { addNewDocument, getTemplates } from "../../../api";
+import { addDocument } from "../../../Redux/documentsSlice";
 
 const AddDocument: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -15,10 +14,7 @@ const AddDocument: React.FC = () => {
   const [templates, setTemplates] = useState<TemplateType[]>([]);
   const [pickedTemplate, setPickedTemplate] = useState<string>("");
   useEffect(() => {
-    axios
-      .get(API_URL + "templates/", {
-        headers: { Authorization: sessionStorage.getItem("userToken") },
-      })
+    getTemplates()
       .then((res) => setTemplates(res.data.items))
       .catch((err) => {
         logger.error(err);
@@ -26,12 +22,8 @@ const AddDocument: React.FC = () => {
       });
   }, []);
 
-  const addDoc = () => {
-    axios
-      .post(API_URL + "documents/", null, {
-        params: pickedTemplate && { template_id: pickedTemplate },
-        headers: { Authorization: sessionStorage.getItem("userToken") },
-      })
+  const addDoc = (pickedTemplate: string) => {
+    addNewDocument(pickedTemplate)
       .then((res) => {
         dispatch(addDocument(res.data));
         setAddModal(!addModal);
@@ -73,7 +65,7 @@ const AddDocument: React.FC = () => {
             <div>
               <button
                 className="px-4 m-2 py-1 rounded-md bg-project-window-bonus-100 font-bold"
-                onClick={addDoc}
+                onClick={() => addDoc(pickedTemplate)}
               >
                 Add
               </button>
