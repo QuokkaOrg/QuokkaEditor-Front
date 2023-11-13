@@ -1,26 +1,18 @@
-import axios from "axios";
-import { API_URL, PARSER_STYLES_URL } from "../../../consts";
+import { PARSER_STYLES_URL } from "../../../consts";
 import { ClientState, OperationType, Pos } from "../../../types/ot";
 import { parse } from "latex.js";
+import { getPDF } from "../../../api";
 
 export const getPDFHandler = (id: string) => {
-  axios
-    .get(API_URL + "documents/get-pdf" + id, {
-      headers: {
-        Authorization: sessionStorage.getItem("userToken"),
-        Accept: "application/pdf",
-      },
-      responseType: "blob",
-    })
-    .then((res) => {
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "file.pdf");
-      document.body.appendChild(link);
-      link.click();
-      link.remove;
-    });
+  getPDF(id).then((res) => {
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "file.pdf");
+    document.body.appendChild(link);
+    link.click();
+    link.remove;
+  });
 };
 
 export const onCursorHandler = (

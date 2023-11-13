@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 import DocumentsEditor from "./DocumentsEditor";
 import { ClientState } from "../../../types/ot";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
-import { API_URL } from "../../../consts";
 import DocumentTitleUpdate from "./DocumentTitleUpdate";
 import ShareDocument from "./ShareDocument";
 import { DocumentState } from "../../../Redux/documentsSlice";
+import { getSingleDocument } from "../../../api";
 
 const initialClient = {
   lastSyncedRevision: 0,
@@ -35,18 +34,14 @@ const EditorPage = () => {
   );
 
   useEffect(() => {
-    axios
-      .get(API_URL + "documents" + id, {
-        headers: { Authorization: sessionStorage.getItem("userToken") },
-      })
-      .then((res) => {
-        setClient({
-          ...client,
-          documentState: JSON.parse(res.data.content).join("\n"),
-          lastSyncedRevision: JSON.parse(res.data.last_revision),
-        });
-        setDocument(res.data);
+    getSingleDocument(id).then((res) => {
+      setClient({
+        ...client,
+        documentState: JSON.parse(res.data.content).join("\n"),
+        lastSyncedRevision: JSON.parse(res.data.last_revision),
       });
+      setDocument(res.data);
+    });
   }, []);
 
   return (

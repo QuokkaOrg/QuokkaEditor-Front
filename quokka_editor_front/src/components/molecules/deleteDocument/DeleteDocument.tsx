@@ -1,9 +1,8 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { API_URL } from "../../../consts";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { deleteDocument } from "../../../Redux/documentsSlice";
 import Modal from "../../misc/Modal";
+import { deleteSelectedDocument } from "../../../api";
 
 interface DeleteDocumentType {
   id: string;
@@ -29,17 +28,11 @@ const DeleteDocument: React.FC = () => {
 
   const deleteDoc = (docId: string | undefined) => {
     if (!docId) return;
-    axios
-      .delete(API_URL + "documents/" + docId, {
-        headers: {
-          Authorization: sessionStorage.getItem("userToken"),
-        },
-      })
-      .then((res) => {
-        dispatch(deleteDocument(docId));
-        alert("Document deleted! Status:" + res.status);
-        setDeleteModal((currDeleteModal) => !currDeleteModal);
-      });
+    deleteSelectedDocument(docId).then((res) => {
+      dispatch(deleteDocument(docId));
+      alert("Document deleted! Status:" + res.status);
+      setDeleteModal((currDeleteModal) => !currDeleteModal);
+    });
   };
 
   return (

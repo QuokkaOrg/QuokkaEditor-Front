@@ -1,13 +1,7 @@
 import { Field, Form, Formik } from "formik";
-import { API_URL } from "../../../consts";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-
-interface Login {
-  username: string;
-  password: string;
-}
+import { LoginType } from "../../../types/global";
+import { loginUser } from "../../../api";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -17,8 +11,8 @@ const Login: React.FC = () => {
       <h1 className="text-3xl font-bold">Login</h1>
       <Formik
         initialValues={{ username: "", password: "" }}
-        onSubmit={(values: Login) =>
-          axios.post(API_URL + "auth/login", values).then((res) => {
+        onSubmit={(values: LoginType) =>
+          loginUser(values).then((res) => {
             if (res.data.status_code) {
               alert(res.data.detail);
             } else {

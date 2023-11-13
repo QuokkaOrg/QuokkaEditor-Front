@@ -1,14 +1,9 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
-import { API_URL } from "../../../consts";
-import axios from "axios";
 import { ERRORS } from "../../../errors";
+import { RegisterType } from "../../../types/global";
+import { registerUser } from "../../../api";
 
-interface Register {
-  username: string;
-  email: string;
-  password: string;
-}
 const validationSchema = Yup.object().shape({
   username: Yup.string().required(ERRORS.required),
   email: Yup.string().email(ERRORS.email).required(ERRORS.required),
@@ -23,10 +18,13 @@ const Register: React.FC = () => {
       <h1 className="text-3xl font-bold">Register</h1>
       <Formik
         initialValues={{ username: "", email: "", password: "" }}
-        onSubmit={(values: Register) =>
-          axios
-            .post(API_URL + "auth/register", values)
-            .then((res) => res.status === 200 && "Successfully registered")
+        onSubmit={(values: RegisterType) =>
+          registerUser(values).then(
+            (res) =>
+              res.status === 200 &&
+              //TODO register toast / navigate to login or login automatically
+              alert("Successfully registered")
+          )
         }
         validationSchema={validationSchema}
       >
