@@ -2,12 +2,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../Redux/hooks";
 import { useEffect } from "react";
 import { getDocuments } from "../../../Redux/documentsSlice";
-import axios from "axios";
-import { API_URL } from "../../../consts";
 import AddDocument from "../../molecules/addDocument/AddDocument";
 import SearchBar from "../../atoms/searchBar/SearchBar";
 import DocumentOptions from "../../molecules/documentsOptions/DocumentsOptions";
 import DocumentsGrid from "../../molecules/documentsGrid/DocumentsGrid";
+import { getPageOfDocuments } from "../../../api";
+import { DEFAULT_PAGE_PARAMS } from "../../../consts";
 
 const Documents: React.FC = () => {
   const location = useLocation();
@@ -15,16 +15,11 @@ const Documents: React.FC = () => {
 
   const dispatch = useAppDispatch();
 
-  const params = location.search;
-
+  const params = location.search ? location.search : DEFAULT_PAGE_PARAMS;
   useEffect(() => {
-    axios
-      .get(API_URL + `documents/${params}`, {
-        headers: { Authorization: sessionStorage.getItem("userToken") },
-      })
-      .then((res) => {
-        dispatch(getDocuments(res.data));
-      });
+    getPageOfDocuments(params).then((res) => {
+      dispatch(getDocuments(res.data));
+    });
   }, []);
 
   const logoutAction = () => {

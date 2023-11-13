@@ -20,7 +20,7 @@ const initialState: DocumentsState = {
   items: [],
   pages: 0,
   page: 1,
-  size: 50,
+  size: 18,
 };
 
 export const documentsSlice = createSlice({

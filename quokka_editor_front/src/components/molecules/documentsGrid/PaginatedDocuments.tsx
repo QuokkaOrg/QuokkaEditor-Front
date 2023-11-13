@@ -1,9 +1,8 @@
 import ReactPaginate from "react-paginate";
 import { useAppSelector, useAppDispatch } from "../../../Redux/hooks";
 import DocumentBox from "../../atoms/documentBox/DocumentBox";
-import axios from "axios";
-import { API_URL } from "../../../consts";
 import { getDocuments } from "../../../Redux/documentsSlice";
+import { getPageOfDocuments } from "../../../api";
 
 type PageChange = {
   selected: number;
@@ -18,13 +17,10 @@ const PaginatedDocuments: React.FC = () => {
   const paginationStyles = "bg-slate-400 rounded-xl py-2 px-4 m-1 font-bold";
 
   const handlePageChange = (event: PageChange) => {
-    axios
-      .get(API_URL + `documents/?page=${event.selected + 1}&size=${pageSize}`, {
-        headers: { Authorization: sessionStorage.getItem("userToken") },
-      })
-      .then((res) => {
-        dispatch(getDocuments(res.data));
-      });
+    const params = `?page=${event.selected + 1} &size=${pageSize}`;
+    getPageOfDocuments(params).then((res) => {
+      dispatch(getDocuments(res.data));
+    });
   };
 
   return (

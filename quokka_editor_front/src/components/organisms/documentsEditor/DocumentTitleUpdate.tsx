@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { DocumentState } from "../../../Redux/documentsSlice";
-import axios from "axios";
-import { API_URL } from "../../../consts";
+import { updateTitle } from "../../../api";
 
 interface DocumentTitleUpdateProps {
   id: string;
@@ -19,16 +18,7 @@ const DocumentTitleUpdate: React.FC<DocumentTitleUpdateProps> = ({
 
   const titleSubmitHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key !== "Enter") return;
-    axios
-      .patch(
-        API_URL + "documents" + id,
-        {
-          title: newTitle,
-        },
-        {
-          headers: { Authorization: sessionStorage.getItem("userToken") },
-        }
-      )
+    updateTitle(id, newTitle)
       .then((res) => {
         //TODO change alert to toast
         setIsEditable((currEditable) => !currEditable);
