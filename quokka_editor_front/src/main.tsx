@@ -8,6 +8,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Register from "./components/organisms/register/Register.tsx";
 import Documents from "./components/organisms/documentsPage/Documents.tsx";
 import EditorPage from "./components/organisms/documentsEditor/EditorPage.tsx";
+import AuthProvider from "./components/misc/AuthProvider.tsx";
 
 const router = createBrowserRouter([
   {
@@ -26,9 +27,11 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <Provider store={store}>
-    <div className="min-h-screen bg-project-theme-dark-300">
-      <RouterProvider router={router} />
-    </div>
-  </Provider>
+  <AuthProvider>
+    <Provider store={store}>
+      <div className="min-h-screen bg-project-theme-dark-300">
+        <RouterProvider router={router} />
+      </div>
+    </Provider>
+  </AuthProvider>
 );

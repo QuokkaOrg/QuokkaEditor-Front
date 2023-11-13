@@ -7,6 +7,7 @@ import {
   LOGIN_URL,
   REGISTER_URL,
   SHARE_DOCUMENT_URL,
+  TOKEN_REFRESH_URL,
 } from "./apiUrls";
 import { LoginType, RegisterType } from "./types/global";
 
@@ -88,4 +89,8 @@ export const shareDocument = (
     },
     { headers: getHeaders() }
   );
+};
+
+export const refreshToken = () => {
+  return axios.get(TOKEN_REFRESH_URL, { headers: getHeaders() });
 };
