@@ -40,17 +40,20 @@ const DocumentTitleUpdate: React.FC<DocumentTitleUpdateProps> = ({
         onClick={() => setIsEditable((currEditable) => !currEditable)}
       ></div>
       {isEditable ? (
-        <input
-          className="w-36 px-2 py-0.5 bg-project-theme-dark-400 focus:outline-none focus:border-project-window-bonus-100 focus:ring-1 rounded-md text-white z-20"
-          type="text"
-          name="titleInput"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-          onKeyDown={(e) => titleSubmitHandler(e)}
-        />
+        <div className="w-full px-2 py-0.5 relative">
+          &nbsp;
+          <input
+            className="w-36 px-2 py-0.5 bg-project-theme-dark-400 focus:outline-none focus:border-project-window-bonus-100 focus:ring-1 rounded-md text-white absolute top-0 left-0 z-20"
+            type="text"
+            name="titleInput"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            onKeyDown={(e) => titleSubmitHandler(e)}
+          />
+        </div>
       ) : (
         <span
-          className="w-36 px-1 py-0.5"
+          className="w-full px-2 py-0.5 cursor-pointer"
           onClick={() => {
             setNewTitle(title);
             setIsEditable((currEditable) => !currEditable);

@@ -60,7 +60,7 @@ const ShareDocument: React.FC<ShareDocumentProps> = ({
   return (
     <>
       <div
-        className="flex select-none cursor-pointer font-bold rounded-full pl-4 shadow hover:shadow-[0px_0px_8px_4px_rgba(75,75,75,0.15)] bg-project-theme-dark-350 justify-center items-center"
+        className="flex select-none cursor-pointer font-bold rounded-full pl-4 ml-6 shadow hover:shadow-[0px_0px_8px_4px_rgba(75,75,75,0.15)] bg-project-theme-dark-350 justify-center items-center"
         onClick={() => setShareModal(!shareModal)}
       >
         <h1>Share</h1>

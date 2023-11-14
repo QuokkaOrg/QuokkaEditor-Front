@@ -6,6 +6,7 @@ import DocumentTitleUpdate from "./DocumentTitleUpdate";
 import ShareDocument from "./ShareDocument";
 import { DocumentState } from "../../../Redux/documentsSlice";
 import { getSingleDocument } from "../../../api";
+import ConnectedClients from "./ConnectedClients";
 
 const initialClient = {
   lastSyncedRevision: 0,
@@ -65,17 +66,19 @@ const EditorPage = () => {
               Insert <img src="/arrow.svg" className="p-4"></img>
             </button>
           </div>
-          {/* todo share onclick*/}
-          <ShareDocument
-            docId={id}
-            title={document.title}
-            isShared={document.shared_by_link}
-            sharedPrivileges={document.shared_role}
-            setDocumentPrivileges={setDocument}
-          />
+          <div className="w-full h-[68px] flex min-w-max items-center justify-end">
+            <ConnectedClients />
+            <ShareDocument
+              docId={id}
+              title={document.title}
+              isShared={document.shared_by_link}
+              sharedPrivileges={document.shared_role}
+              setDocumentPrivileges={setDocument}
+            />
+          </div>
         </div>
       </div>
-      <div id="FilesBar" className="bg-project-there-dark-400 bg-[#3A3C4E] p-1">
+      <div id="FilesBar" className="bg-project-theme-dark-400 p-1">
         <img src="/typesrc.svg" className="ml-1"></img>
       </div>
       <DocumentsEditor client={client} setClient={setClient} id={id} />
