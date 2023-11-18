@@ -3,6 +3,9 @@ import { useAppSelector, useAppDispatch } from "../../../Redux/hooks";
 import DocumentBox from "../../atoms/documentBox/DocumentBox";
 import { getDocuments } from "../../../Redux/documentsSlice";
 import { getPageOfDocuments } from "../../../api";
+import logger from "../../../logger";
+import { useNavigate } from "react-router-dom";
+import { handleDocumentsError } from "../../../errors";
 
 type PageChange = {
   selected: number;
@@ -16,11 +19,18 @@ const PaginatedDocuments: React.FC = () => {
   const pageSize = useAppSelector((state) => state.documents.size);
   const paginationStyles = "bg-slate-400 rounded-xl py-2 px-4 m-1 font-bold";
 
+  const navigate = useNavigate();
+
   const handlePageChange = (event: PageChange) => {
     const params = `?page=${event.selected + 1} &size=${pageSize}`;
-    getPageOfDocuments(params).then((res) => {
-      dispatch(getDocuments(res.data));
-    });
+    getPageOfDocuments(params)
+      .then((res) => {
+        dispatch(getDocuments(res.data));
+      })
+      .catch((err) => {
+        logger.error(err);
+        handleDocumentsError(err, navigate);
+      });
   };
 
   return (

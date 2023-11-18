@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { DocumentState } from "../../../Redux/documentsSlice";
 import { updateTitle } from "../../../api";
+import toast from "react-hot-toast";
+import { TOAST_OPTIONS } from "../../../consts";
+import { ERRORS } from "../../../errors";
 
 interface DocumentTitleUpdateProps {
   id: string;
@@ -19,15 +22,13 @@ const DocumentTitleUpdate: React.FC<DocumentTitleUpdateProps> = ({
   const titleSubmitHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key !== "Enter") return;
     updateTitle(id, newTitle)
-      .then((res) => {
-        //TODO change alert to toast
+      .then(() => {
+        toast.success("Title Changed", TOAST_OPTIONS);
         setIsEditable((currEditable) => !currEditable);
-        alert("Title changed");
         setTitle((currDocument) => ({ ...currDocument, title: newTitle }));
       })
-      .catch((err) => {
-        //TODO change alert to toast
-        alert("Something went wrong");
+      .catch(() => {
+        toast.error(ERRORS.somethingWrong, TOAST_OPTIONS);
       });
   };
 

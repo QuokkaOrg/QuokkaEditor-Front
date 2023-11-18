@@ -6,6 +6,10 @@ import { useNavigate } from "react-router-dom";
 import logger from "../../../logger";
 import { addNewDocument, getTemplates } from "../../../api";
 import { addDocument } from "../../../Redux/documentsSlice";
+import { AxiosError } from "axios";
+import toast from "react-hot-toast";
+import { TOAST_OPTIONS } from "../../../consts";
+import { ERRORS } from "../../../errors";
 
 const AddDocument: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -14,12 +18,7 @@ const AddDocument: React.FC = () => {
   const [templates, setTemplates] = useState<TemplateType[]>([]);
   const [pickedTemplate, setPickedTemplate] = useState<string>("");
   useEffect(() => {
-    getTemplates()
-      .then((res) => setTemplates(res.data.items))
-      .catch((err) => {
-        logger.error(err);
-        //TODO add error toast
-      });
+    getTemplates().then((res) => setTemplates(res.data.items));
   }, []);
 
   const addDoc = (pickedTemplate: string) => {
@@ -29,9 +28,10 @@ const AddDocument: React.FC = () => {
         setAddModal(!addModal);
         navigate(res.data.id);
       })
-      .catch((err) => {
+      .catch((err: AxiosError) => {
         logger.error(err);
-        //TODO add error toast or navigate to error page
+        navigate("/");
+        toast.error(ERRORS.sessionExpired, TOAST_OPTIONS);
       });
   };
 

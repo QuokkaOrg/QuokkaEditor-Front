@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import DocumentsEditor from "./DocumentsEditor";
 import { ClientState } from "../../../types/ot";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import DocumentTitleUpdate from "./DocumentTitleUpdate";
 import ShareDocument from "./ShareDocument";
 import { DocumentState } from "../../../Redux/documentsSlice";
 import { getSingleDocument } from "../../../api";
+import { handleEditorError } from "../../../errors";
 
 const initialClient = {
   lastSyncedRevision: 0,
@@ -26,6 +27,7 @@ const initialDocument = {
 const EditorPage = () => {
   const [client, setClient] = useState<ClientState>(initialClient);
   const [document, setDocument] = useState<DocumentState>(initialDocument);
+  const navigate = useNavigate();
 
   const location = useLocation();
   const id = location.pathname.slice(
@@ -34,14 +36,16 @@ const EditorPage = () => {
   );
 
   useEffect(() => {
-    getSingleDocument(id).then((res) => {
-      setClient({
-        ...client,
-        documentState: JSON.parse(res.data.content).join("\n"),
-        lastSyncedRevision: JSON.parse(res.data.last_revision),
-      });
-      setDocument(res.data);
-    });
+    getSingleDocument(id)
+      .then((res) => {
+        setClient({
+          ...client,
+          documentState: JSON.parse(res.data.content).join("\n"),
+          lastSyncedRevision: JSON.parse(res.data.last_revision),
+        });
+        setDocument(res.data);
+      })
+      .catch((err) => handleEditorError(err, navigate));
   }, []);
 
   return (

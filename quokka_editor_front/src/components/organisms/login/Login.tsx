@@ -2,6 +2,7 @@ import { Field, Form, Formik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginType } from "../../../types/global";
 import { loginUser } from "../../../api";
+import { handleLoginError } from "../../../errors";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -12,14 +13,12 @@ const Login: React.FC = () => {
       <Formik
         initialValues={{ username: "", password: "" }}
         onSubmit={(values: LoginType) =>
-          loginUser(values).then((res) => {
-            if (res.data.status_code) {
-              alert(res.data.detail);
-            } else {
+          loginUser(values)
+            .then((res) => {
               sessionStorage.setItem("userToken", "Bearer " + res.data.token);
               navigate("/documents/");
-            }
-          })
+            })
+            .catch((err) => handleLoginError(err))
         }
       >
         {() => (

@@ -1,6 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/react-hot-toast/src/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     extend: {
       colors: {
@@ -28,13 +32,14 @@ export default {
           400: "#3A3C4E",
           500: "#474A61",
           600: "#5D5F6D",
-          700: "#9F9FA2"
+          700: "#9F9FA2",
         },
         "project-window-bonus": {
           100: "#295E6E",
+          150: "#165163",
           200: "#872727",
           300: "#656A46",
-        }
+        },
       },
     },
   },

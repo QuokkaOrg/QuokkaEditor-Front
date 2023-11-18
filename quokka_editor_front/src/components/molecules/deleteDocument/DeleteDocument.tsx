@@ -3,6 +3,10 @@ import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { deleteDocument } from "../../../Redux/documentsSlice";
 import Modal from "../../misc/Modal";
 import { deleteSelectedDocument } from "../../../api";
+import logger from "../../../logger";
+import toast from "react-hot-toast";
+import { TOAST_OPTIONS } from "../../../consts";
+import { ERRORS } from "../../../errors";
 
 interface DeleteDocumentType {
   id: string;
@@ -28,11 +32,16 @@ const DeleteDocument: React.FC = () => {
 
   const deleteDoc = (docId: string | undefined) => {
     if (!docId) return;
-    deleteSelectedDocument(docId).then((res) => {
-      dispatch(deleteDocument(docId));
-      alert("Document deleted! Status:" + res.status);
-      setDeleteModal((currDeleteModal) => !currDeleteModal);
-    });
+    deleteSelectedDocument(docId)
+      .then((res) => {
+        dispatch(deleteDocument(docId));
+        alert("Document deleted! Status:" + res.status);
+        setDeleteModal((currDeleteModal) => !currDeleteModal);
+      })
+      .catch((err) => {
+        logger.error(err);
+        toast.error(ERRORS.somethingWrong, TOAST_OPTIONS);
+      });
   };
 
   return (
