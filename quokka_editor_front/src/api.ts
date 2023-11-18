@@ -10,6 +10,7 @@ import {
   TOKEN_REFRESH_URL,
 } from "./apiUrls";
 import { LoginType, RegisterType } from "./types/global";
+import { throttle } from "lodash";
 
 const getHeaders = () => {
   return { Authorization: sessionStorage.getItem("userToken") };
@@ -94,3 +95,8 @@ export const shareDocument = (
 export const refreshToken = () => {
   return axios.get(TOKEN_REFRESH_URL, { headers: getHeaders() });
 };
+
+export const throttledSearch = throttle(
+  async (searchQuery: string) => await getPageOfDocuments(searchQuery),
+  300
+);
