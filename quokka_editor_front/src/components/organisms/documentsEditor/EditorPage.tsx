@@ -82,7 +82,12 @@ const EditorPage = () => {
       <div id="FilesBar" className="bg-project-there-dark-400 bg-[#3A3C4E] p-1">
         <img src="/typesrc.svg" className="ml-1"></img>
       </div>
-      <DocumentsEditor client={client} setClient={setClient} id={id} />
+      <DocumentsEditor
+        client={client}
+        setClient={setClient}
+        id={id}
+        editingDocument={document}
+      />
     </div>
   );
 };

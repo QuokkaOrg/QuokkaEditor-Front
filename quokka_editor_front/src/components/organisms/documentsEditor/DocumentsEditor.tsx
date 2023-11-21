@@ -19,11 +19,13 @@ import {
 } from "./handlers";
 import { sendChanges } from "./ot";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
+import { DocumentState } from "../../../Redux/documentsSlice";
 
 interface DocumentsEditorProps {
   client: ClientState;
   setClient: React.Dispatch<React.SetStateAction<ClientState>>;
   id: string;
+  editingDocument: DocumentState;
 }
 
 const initialScroll = {
@@ -39,6 +41,7 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
   client,
   setClient,
   id,
+  editingDocument,
 }) => {
   const [{ data, error }, setState] = useState<{
     data: string;
@@ -87,6 +90,8 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
     sendChanges(socket, client, setClient);
   }, [client.sentChanges]);
 
+
+  
   return (
     <div className="grid grid-cols-2">
       <CodeMirror
@@ -102,7 +107,15 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
           lineWrapping: true,
         }}
         onBeforeChange={(_editor, data, value) => {
-          onBeforeChangeHandler(data, value, socket, client, setClient);
+          if (!editorRef.current) return;
+          onBeforeChangeHandler(
+            data,
+            value,
+            socket,
+            client,
+            setClient,
+            editingDocument
+          );
         }}
         onChange={(_editor, _data, value) => {
           onChangeHandler(generator, interval, setState, value);
