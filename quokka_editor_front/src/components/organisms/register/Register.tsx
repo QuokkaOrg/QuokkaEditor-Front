@@ -3,9 +3,9 @@ import * as Yup from "yup";
 import { ERRORS } from "../../../errors";
 import { RegisterType } from "../../../types/global";
 import { registerUser } from "../../../api";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { TOAST_OPTIONS } from "../../../consts";
-import { useNavigate } from "react-router-dom";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().required(ERRORS.required),
@@ -19,8 +19,13 @@ const Register: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col justify-center items-center">
-      <h1 className="text-3xl font-bold">Register</h1>
+    <div className="flex flex-col justify-center items-center p-12">
+      <div className ="w-56 m-9 shadow rounded-[30px]">
+          <Link to={"/"}>
+            <button type="button" className="px-7 py-2 cursor-pointer bg-transparent border-none outline-none text-project-theme-dark-115">Log in</button>
+          </Link>
+            <button type="button" className="px-8 py-2 cursor-pointer bg-gradient-to-r from-project-theme-dark-110 to-project-theme-dark-105 rounded-[30px] border-none outline-none text-white">Register</button>
+      </div>
       <Formik
         initialValues={{ username: "", email: "", password: "" }}
         onSubmit={(values: RegisterType) =>
@@ -32,13 +37,12 @@ const Register: React.FC = () => {
         validationSchema={validationSchema}
       >
         {() => (
-          <Form className="flex flex-col justify-center w-52">
-            <label htmlFor="username">Username</label>
+          <Form className="flex flex-col justify-center w-72">
             <Field
               id="username"
               name="username"
               placeholder="Username"
-              className="border border-black rounded-md p-0.5"
+              className="px-0 py-3 mx-0 my-1 border-b outline-none bg-transparent text-white"
             />
             <ErrorMessage
               component="div"
@@ -46,13 +50,12 @@ const Register: React.FC = () => {
               name="username"
             />
 
-            <label htmlFor="email">Email</label>
             <Field
               id="email"
               name="email"
               placeholder="Email"
               type="email"
-              className="border border-black rounded-md p-0.5"
+              className="px-0 py-3 mx-0 my-1 border-b outline-none bg-transparent text-white"
             />
             <ErrorMessage
               component="div"
@@ -60,13 +63,12 @@ const Register: React.FC = () => {
               name="email"
             />
 
-            <label htmlFor="password">Password</label>
             <Field
               id="password"
               name="password"
               placeholder="Password"
               type="password"
-              className="border border-black rounded-md p-0.5"
+              className="px-0 py-3 mx-0 my-1 border-b outline-none bg-transparent text-white"
             />
             <ErrorMessage
               component="div"
@@ -76,7 +78,7 @@ const Register: React.FC = () => {
 
             <button
               type="submit"
-              className="bg-slate-600 text-white rounded-full w-1/2 self-center font-semibold m-2 p-1"
+              className="px-7 py-2 m-auto cursor-pointer bg-project-theme-dark-120 border-none shadow outline-none rounded-[30px] text-white mt-4"
             >
               Register
             </button>
