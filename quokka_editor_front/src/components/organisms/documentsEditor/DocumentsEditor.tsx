@@ -90,8 +90,6 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
     sendChanges(socket, client, setClient);
   }, [client.sentChanges]);
 
-
-  
   return (
     <div className="grid grid-cols-2">
       <CodeMirror
@@ -132,7 +130,7 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
       {remoteClients?.map((cursor) => {
         return (
           <RemoteCursor
-            key={cursor.token}
+            key={cursor.user_token}
             cursorData={cursor}
             editor={editorRef.current}
             scrollInfo={scrollInfo}

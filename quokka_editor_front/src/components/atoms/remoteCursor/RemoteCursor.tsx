@@ -13,7 +13,7 @@ const RemoteCursor: React.FC<RemoteCursorProps> = ({
   editor,
   scrollInfo,
 }) => {
-  const { token, ch, line, clientColor } = cursorData;
+  const { username, user_token, ch, line, clientColor } = cursorData;
 
   if (!editor) return null;
   const { left, top } = editor.charCoords({ ch, line }, "local");
@@ -52,7 +52,7 @@ const RemoteCursor: React.FC<RemoteCursorProps> = ({
           borderColor: clientColor,
         }}
       >
-        {token}
+        {user_token}
       </div>
     </div>
   );

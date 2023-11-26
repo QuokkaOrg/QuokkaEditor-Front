@@ -19,7 +19,7 @@ export type ClientState = {
 };
 
 export type CursorType = {
-  token: string;
+  user_token: string;
   ch: number;
   line: number;
 }

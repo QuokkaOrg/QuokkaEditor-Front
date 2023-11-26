@@ -1,7 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { CursorType } from "../types/ot";
 
 export interface RemoteClient {
-  token: string;
+  username: string;
+  user_token: string;
   ch: number;
   line: number;
   clientColor?: string;
@@ -23,34 +25,38 @@ export const clientsSlice = createSlice({
   name: "remoteClients",
   initialState,
   reducers: {
+    getRemoteClients: (state, action: PayloadAction<RemoteClient[]>) => {
+      state.clients = action.payload;
+    },
     addRemoteClient: (state, action: PayloadAction<RemoteClient>) => {
-      if (!state.clients)
-        state.clients = [
-          { ...action.payload, clientColor: generateClientColor() },
-        ];
-      else
-        state.clients = [
-          ...state.clients,
-          { ...action.payload, clientColor: generateClientColor() },
-        ];
+      if (!state.clients) state.clients = [{ ...action.payload }];
+      else state.clients = [...state.clients, { ...action.payload }];
     },
     deleteRemoteClient: (state, action: PayloadAction<string>) => {
       if (!state.clients) return;
       state.clients = state.clients.filter(
-        (client) => client.token !== action.payload
+        (client) => client.user_token !== action.payload
       );
     },
-    updateRemoteClient: (state, action: PayloadAction<RemoteClient>) => {
+    updateRemoteClient: (state, action: PayloadAction<CursorType>) => {
       if (!state.clients) return;
       state.clients = state.clients.map((client) => {
-        if (client.token === action.payload.token)
-          return { ...action.payload, clientColor: client.clientColor };
-        else return client;
+        if (client.user_token === action.payload.user_token) {
+          return {
+            ...client,
+            ch: action.payload.ch,
+            line: action.payload.line,
+          };
+        } else return client;
       });
     },
   },
 });
 
-export const { addRemoteClient, deleteRemoteClient, updateRemoteClient } =
-  clientsSlice.actions;
+export const {
+  addRemoteClient,
+  deleteRemoteClient,
+  updateRemoteClient,
+  getRemoteClients,
+} = clientsSlice.actions;
 export default clientsSlice.reducer;
