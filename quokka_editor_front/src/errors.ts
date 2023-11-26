@@ -12,7 +12,7 @@ export const ERRORS = {
   somethingWrong: "Something went wrong. Please try again.",
 };
 
-type ApiError = {
+type ApiErrorType = {
   detail: string;
 };
 
@@ -28,7 +28,7 @@ export const handleDocumentsError = (
   }
 };
 
-export const handleLoginError = (err: AxiosError<ApiError>) => {
+export const handleLoginError = (err: AxiosError<ApiErrorType>) => {
   logger.error(err);
   if (err.response?.status == 401) {
     toast.error(err.response.data.detail, TOAST_OPTIONS);
