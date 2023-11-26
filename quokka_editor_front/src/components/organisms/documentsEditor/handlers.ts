@@ -1,7 +1,9 @@
-import { PARSER_STYLES_URL } from "../../../consts";
+import { PARSER_STYLES_URL, TOAST_OPTIONS } from "../../../consts";
 import { ClientState, OperationType, Pos } from "../../../types/ot";
 import { parse } from "latex.js";
 import { getPDF } from "../../../api";
+import { DocumentState } from "../../../Redux/documentsSlice";
+import toast from "react-hot-toast";
 
 export const getPDFHandler = (id: string) => {
   getPDF(id).then((res) => {
@@ -30,9 +32,17 @@ export const onBeforeChangeHandler = (
   value: string,
   socket: React.MutableRefObject<WebSocket | null>,
   client: ClientState,
-  setClient: React.Dispatch<React.SetStateAction<ClientState>>
+  setClient: React.Dispatch<React.SetStateAction<ClientState>>,
+  document: DocumentState
 ) => {
   if (!socket.current) return;
+  if (!canEdit(document)) {
+    toast.error(
+      "You don't have permission to edit this document",
+      TOAST_OPTIONS
+    );
+    return;
+  }
   const operation: OperationType = {
     from_pos: { line: data.from.line, ch: data.from.ch },
     to_pos: { line: data.to.line, ch: data.to.ch },
@@ -88,4 +98,9 @@ export const onChangeHandler = (
       return setState({ data: " ", error: "Unknown error" });
     }
   }, 1000);
+};
+
+export const canEdit = (document: DocumentState) => {
+  if (document.shared_role === "EDIT") return true;
+  return false;
 };

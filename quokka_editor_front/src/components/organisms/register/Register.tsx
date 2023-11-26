@@ -4,6 +4,8 @@ import { ERRORS } from "../../../errors";
 import { RegisterType } from "../../../types/global";
 import { registerUser } from "../../../api";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { TOAST_OPTIONS } from "../../../consts";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().required(ERRORS.required),
@@ -14,6 +16,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const Register: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-col justify-center items-center p-12">
       <div className ="w-56 m-9 shadow rounded-[30px]">
@@ -25,12 +29,10 @@ const Register: React.FC = () => {
       <Formik
         initialValues={{ username: "", email: "", password: "" }}
         onSubmit={(values: RegisterType) =>
-          registerUser(values).then(
-            (res) =>
-              res.status === 200 &&
-              //TODO register toast / navigate to login or login automatically
-              alert("Successfully registered")
-          )
+          registerUser(values).then(() => {
+            toast.success("Successfully registered", TOAST_OPTIONS);
+            navigate("/");
+          })
         }
         validationSchema={validationSchema}
       >

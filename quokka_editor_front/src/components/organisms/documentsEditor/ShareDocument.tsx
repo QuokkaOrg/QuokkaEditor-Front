@@ -2,6 +2,9 @@ import { useState } from "react";
 import Modal from "../../misc/Modal";
 import { DocumentState } from "../../../Redux/documentsSlice";
 import { changeDocumentPrivileges, shareDocument } from "../../../api";
+import toast from "react-hot-toast";
+import { TOAST_MESSAGE, TOAST_OPTIONS } from "../../../consts";
+import { ERRORS } from "../../../errors";
 
 interface ShareDocumentProps {
   docId: string;
@@ -22,39 +25,29 @@ const ShareDocument: React.FC<ShareDocumentProps> = ({
 
   const changePrivilegesHandler = (privileges: string) => {
     changeDocumentPrivileges(docId, privileges, isShared)
-      .then((res) => {
-        //TODO change alert to toast
+      .then(() => {
         setDocumentPrivileges((currDocument) => ({
           ...currDocument,
           shared_role: privileges,
         }));
-        alert("Privileges changed!");
+        toast.success(TOAST_MESSAGE.privilegesChanged, TOAST_OPTIONS);
       })
-      .catch((err) =>
-        //TODO change alert to toast
-        alert("Something went wrong. Please Try Again")
-      );
+      .catch(() => toast.error(ERRORS.somethingWrong, TOAST_OPTIONS));
   };
 
   const shareHandler = () => {
     shareDocument(docId, sharedPrivileges, isShared)
-      .then((res) => {
+      .then(() => {
         setDocumentPrivileges((currDocument) => ({
           ...currDocument,
           shared_by_link: !currDocument.shared_by_link,
         }));
-        //TODO change alert to toast
-        alert(
-          "Document " +
-            title +
-            " sharing options have been updated succesfully!"
-        );
+        !isShared
+          ? toast.success(TOAST_MESSAGE.documentShared, TOAST_OPTIONS)
+          : toast.success(TOAST_MESSAGE.documentNotShared, TOAST_OPTIONS);
         setShareModal(!shareModal);
       })
-      .catch((err) =>
-        //TODO change alert to toast
-        alert("Something went wrong with sharing document. Please Try Again")
-      );
+      .catch(() => toast.error(ERRORS.somethingWrong, TOAST_OPTIONS));
   };
 
   return (
@@ -76,8 +69,7 @@ const ShareDocument: React.FC<ShareDocumentProps> = ({
               className="bg-project-theme-dark-400 rounded-full m-2 p-2 text-sm"
               onClick={() => {
                 navigator.clipboard.writeText(window.location.href);
-                //TODO change alert to toast
-                alert("URL Copied to clipboard!");
+                toast.success(TOAST_MESSAGE.urlCopied, TOAST_OPTIONS);
               }}
             >
               {window.location.href}

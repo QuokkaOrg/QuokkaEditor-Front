@@ -8,6 +8,8 @@ import DocumentOptions from "../../molecules/documentsOptions/DocumentsOptions";
 import DocumentsGrid from "../../molecules/documentsGrid/DocumentsGrid";
 import { getPageOfDocuments } from "../../../api";
 import { DEFAULT_PAGE_PARAMS } from "../../../consts";
+import logger from "../../../logger";
+import { handleDocumentsError } from "../../../errors";
 
 const Documents: React.FC = () => {
   const location = useLocation();
@@ -17,9 +19,14 @@ const Documents: React.FC = () => {
 
   const params = location.search ? location.search : DEFAULT_PAGE_PARAMS;
   useEffect(() => {
-    getPageOfDocuments(params).then((res) => {
-      dispatch(getDocuments(res.data));
-    });
+    getPageOfDocuments(params)
+      .then((res) => {
+        dispatch(getDocuments(res.data));
+      })
+      .catch((err) => {
+        logger.error(err);
+        handleDocumentsError(err, navigate);
+      });
   }, []);
 
   const logoutAction = () => {

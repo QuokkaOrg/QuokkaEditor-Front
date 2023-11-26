@@ -9,6 +9,8 @@ import Register from "./components/organisms/register/Register.tsx";
 import Documents from "./components/organisms/documentsPage/Documents.tsx";
 import EditorPage from "./components/organisms/documentsEditor/EditorPage.tsx";
 import AuthProvider from "./components/misc/AuthProvider.tsx";
+import { Toaster } from "react-hot-toast";
+import NotFoundPage from "./components/organisms/NotFoundPage/NotFoundPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -24,12 +26,14 @@ const router = createBrowserRouter([
     element: <Documents />,
   },
   { path: "/documents/:documentId", element: <EditorPage /> },
+  { path: "/404", element: <NotFoundPage /> },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <AuthProvider>
     <Provider store={store}>
       <div className="min-h-screen bg-project-theme-dark-300">
+        <Toaster position="bottom-right" />
         <RouterProvider router={router} />
       </div>
     </Provider>
