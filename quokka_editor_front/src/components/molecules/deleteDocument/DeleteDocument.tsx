@@ -5,7 +5,7 @@ import Modal from "../../misc/Modal";
 import { deleteSelectedDocument } from "../../../api";
 import logger from "../../../logger";
 import toast from "react-hot-toast";
-import { TOAST_OPTIONS } from "../../../consts";
+import { TOAST_MESSAGE, TOAST_OPTIONS } from "../../../consts";
 import { ERRORS } from "../../../errors";
 
 interface DeleteDocumentType {
@@ -35,7 +35,7 @@ const DeleteDocument: React.FC = () => {
     deleteSelectedDocument(docId)
       .then((res) => {
         dispatch(deleteDocument(docId));
-        alert("Document deleted! Status:" + res.status);
+        toast.success(TOAST_MESSAGE.deleted, TOAST_OPTIONS);
         setDeleteModal((currDeleteModal) => !currDeleteModal);
       })
       .catch((err) => {

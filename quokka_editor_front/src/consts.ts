@@ -8,6 +8,14 @@ export const TOAST_OPTIONS = {
   style: { backgroundColor: "#295E6ECC", color: "white" },
 };
 
+export const TOAST_MESSAGE = {
+  deleted: "Document deleted!",
+  urlCopied: "URL copied to clipboard!",
+  privilegesChanged: "Privileges changed!",
+  documentShared: "Your document is now shared",
+  documentNotShared: "Your document is no longer shared"
+};
+
 export const OperationInputs = {
   INPUT: "+INPUT",
   DELETE: "+DELETE",

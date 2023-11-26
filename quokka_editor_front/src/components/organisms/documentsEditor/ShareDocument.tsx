@@ -3,7 +3,7 @@ import Modal from "../../misc/Modal";
 import { DocumentState } from "../../../Redux/documentsSlice";
 import { changeDocumentPrivileges, shareDocument } from "../../../api";
 import toast from "react-hot-toast";
-import { TOAST_OPTIONS } from "../../../consts";
+import { TOAST_MESSAGE, TOAST_OPTIONS } from "../../../consts";
 import { ERRORS } from "../../../errors";
 
 interface ShareDocumentProps {
@@ -30,7 +30,7 @@ const ShareDocument: React.FC<ShareDocumentProps> = ({
           ...currDocument,
           shared_role: privileges,
         }));
-        toast.success("Privileges changed!", TOAST_OPTIONS);
+        toast.success(TOAST_MESSAGE.privilegesChanged, TOAST_OPTIONS);
       })
       .catch(() => toast.error(ERRORS.somethingWrong, TOAST_OPTIONS));
   };
@@ -43,8 +43,8 @@ const ShareDocument: React.FC<ShareDocumentProps> = ({
           shared_by_link: !currDocument.shared_by_link,
         }));
         !isShared
-          ? toast.success("Your document is now shared", TOAST_OPTIONS)
-          : toast.success("Your document is no longer shared", TOAST_OPTIONS);
+          ? toast.success(TOAST_MESSAGE.documentShared, TOAST_OPTIONS)
+          : toast.success(TOAST_MESSAGE.documentNotShared, TOAST_OPTIONS);
         setShareModal(!shareModal);
       })
       .catch(() => toast.error(ERRORS.somethingWrong, TOAST_OPTIONS));
@@ -69,7 +69,7 @@ const ShareDocument: React.FC<ShareDocumentProps> = ({
               className="bg-project-theme-dark-400 rounded-full m-2 p-2 text-sm"
               onClick={() => {
                 navigator.clipboard.writeText(window.location.href);
-                toast.success("URL Copied to clipboard!", TOAST_OPTIONS);
+                toast.success(TOAST_MESSAGE.urlCopied, TOAST_OPTIONS);
               }}
             >
               {window.location.href}
