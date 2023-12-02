@@ -7,3 +7,4 @@ export const CURRENT_DOCUMENT_URL = API_URL + "documents";
 export const GET_PDF_URL = API_URL + "documents/get-pdf";
 export const SHARE_DOCUMENT_URL = API_URL + "documents/share";
 export const TOKEN_REFRESH_URL = API_URL + "auth/refresh";
+export const USER_DATA_URL = API_URL + "users/me";

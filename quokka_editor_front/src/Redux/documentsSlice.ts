@@ -57,6 +57,12 @@ export const documentsSlice = createSlice({
     addDocument: (state, action: PayloadAction<DocumentState>) => {
       state.items = [...state.items, action.payload];
     },
+    clearDocuments: (state) => {
+      state.items = initialState.items;
+      state.page = initialState.page;
+      state.pages = initialState.pages;
+      state.size = initialState.size;
+    },
   },
 });
 
@@ -65,6 +71,7 @@ export const {
   deleteDocument,
   addDocument,
   setSelectedDocument,
+  clearDocuments,
 } = documentsSlice.actions;
 
 export default documentsSlice.reducer;

@@ -13,7 +13,9 @@ export const TOAST_MESSAGE = {
   urlCopied: "URL copied to clipboard!",
   privilegesChanged: "Privileges changed!",
   documentShared: "Your document is now shared",
-  documentNotShared: "Your document is no longer shared"
+  documentNotShared: "Your document is no longer shared",
+  logOut: "Succesfully logged out!",
+  userUpdated: "User informations succesfully updated!",
 };
 
 export const OperationInputs = {

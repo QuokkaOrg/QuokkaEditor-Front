@@ -8,9 +8,11 @@ import {
   REGISTER_URL,
   SHARE_DOCUMENT_URL,
   TOKEN_REFRESH_URL,
+  USER_DATA_URL,
 } from "./apiUrls";
 import { LoginType, RegisterType } from "./types/global";
 import { throttle } from "lodash";
+import { UserState } from "./Redux/userSlice";
 
 const getHeaders = () => {
   return { Authorization: sessionStorage.getItem("userToken") };
@@ -100,3 +102,11 @@ export const throttledSearch = throttle(
   async (searchQuery: string) => await getPageOfDocuments(searchQuery),
   300
 );
+
+export const getUser = () => {
+  return axios.get(USER_DATA_URL, { headers: getHeaders() });
+};
+
+export const updateUser = (updatedUserData: UserState) => {
+  return axios.patch(USER_DATA_URL, updatedUserData, { headers: getHeaders() });
+};

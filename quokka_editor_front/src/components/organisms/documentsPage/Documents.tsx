@@ -6,10 +6,13 @@ import AddDocument from "../../molecules/addDocument/AddDocument";
 import SearchBar from "../../atoms/searchBar/SearchBar";
 import DocumentOptions from "../../molecules/documentsOptions/DocumentsOptions";
 import DocumentsGrid from "../../molecules/documentsGrid/DocumentsGrid";
-import { getPageOfDocuments } from "../../../api";
-import { DEFAULT_PAGE_PARAMS } from "../../../consts";
+import { getPageOfDocuments, getUser } from "../../../api";
+import { DEFAULT_PAGE_PARAMS, TOAST_OPTIONS } from "../../../consts";
 import logger from "../../../logger";
-import { handleDocumentsError } from "../../../errors";
+import { ERRORS, handleDocumentsError } from "../../../errors";
+import Profile from "../Profile/Profile";
+import { setUser } from "../../../Redux/userSlice";
+import toast from "react-hot-toast";
 
 const Documents: React.FC = () => {
   const location = useLocation();
@@ -19,6 +22,12 @@ const Documents: React.FC = () => {
 
   const params = location.search ? location.search : DEFAULT_PAGE_PARAMS;
   useEffect(() => {
+    getUser()
+      .then((res) => dispatch(setUser(res.data)))
+      .catch(() => {
+        toast.error(ERRORS.somethingWrong, TOAST_OPTIONS);
+      });
+
     getPageOfDocuments(params)
       .then((res) => {
         dispatch(getDocuments(res.data));
@@ -43,9 +52,7 @@ const Documents: React.FC = () => {
       <div id="right-panel " className="w-full h-screen">
         <div id="top-bar" className="flex items-center justify-between h-20">
           <SearchBar />
-          <button type="button" onClick={logoutAction}>
-            Logout
-          </button>
+          <Profile />
         </div>
         <div
           id="documents"
