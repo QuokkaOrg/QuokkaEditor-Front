@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { clearUser } from "../../../Redux/userSlice";
-import { clearDocuments } from "../../../Redux/documentsSlice";
+import { clearProjects } from "../../../Redux/documentsSlice";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { TOAST_MESSAGE, TOAST_OPTIONS } from "../../../consts";
@@ -18,7 +18,7 @@ const Profile: React.FC = () => {
 
   const handleLogout = () => {
     dispatch(clearUser());
-    dispatch(clearDocuments());
+    dispatch(clearProjects());
     sessionStorage.removeItem("userToken");
     navigate("/");
     toast.success(TOAST_MESSAGE.logOut, TOAST_OPTIONS);

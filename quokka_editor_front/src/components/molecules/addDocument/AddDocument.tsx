@@ -4,8 +4,8 @@ import Modal from "../../misc/Modal";
 import { TemplateType } from "../../../types/global";
 import { useNavigate } from "react-router-dom";
 import logger from "../../../logger";
-import { addNewDocument, getTemplates } from "../../../api";
-import { addDocument } from "../../../Redux/documentsSlice";
+import { addNewDocument, addNewProject, getTemplates } from "../../../api";
+import { addProject } from "../../../Redux/documentsSlice";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { TOAST_OPTIONS } from "../../../consts";
@@ -16,17 +16,26 @@ const AddDocument: React.FC = () => {
   const navigate = useNavigate();
   const [addModal, setAddModal] = useState(false);
   const [templates, setTemplates] = useState<TemplateType[]>([]);
-  const [pickedTemplate, setPickedTemplate] = useState<string>("");
+  const [pickedTemplate, setPickedTemplate] = useState<string | null>(null);
   useEffect(() => {
     getTemplates().then((res) => setTemplates(res.data.items));
   }, []);
 
-  const addDoc = (pickedTemplate: string) => {
-    addNewDocument(pickedTemplate)
+  const addDoc = (pickedTemplate: string | null) => {
+    addNewProject()
       .then((res) => {
-        dispatch(addDocument(res.data));
-        setAddModal(!addModal);
-        navigate(res.data.id);
+        const projectResponse = res.data;
+        addNewDocument(res.data.id, pickedTemplate)
+          .then((res) => {
+            dispatch(addProject(projectResponse));
+            setAddModal(!addModal);
+            navigate(res.data.id);
+          })
+          .catch((err) => {
+            logger.error(err);
+            setAddModal(!addModal);
+            toast.error(ERRORS.somethingWrong, TOAST_OPTIONS);
+          });
       })
       .catch((err: AxiosError) => {
         logger.error(err);
@@ -45,19 +54,27 @@ const AddDocument: React.FC = () => {
       </button>
       {addModal && (
         <Modal setShowModal={setAddModal}>
-          <div className="flex flex-col justify-center items-center h-full bg-project-theme-dark-200 text-white">
+          <div className="flex flex-col justify-center items-center rounded-2xl h-full bg-project-theme-dark-200 text-slate-200">
             <p>Add new document</p>
             <select
-              className="m-1 border-2 border-cyan-200 rounded-md p-1"
-              value={pickedTemplate}
+              className="px-3 py-2 my-1 border-b outline-none bg-transparent"
+              value={pickedTemplate ? pickedTemplate : ""}
               name="templateSelection"
               onChange={(e) => setPickedTemplate(e.target.value)}
             >
-              <option value="" disabled>
+              <option
+                value=""
+                disabled
+                className="bg-project-theme-dark-350 text-slate-200"
+              >
                 Pick a template
               </option>
               {templates?.map((template) => (
-                <option key={template.id} value={template.id}>
+                <option
+                  key={template.id}
+                  value={template.id}
+                  className="bg-project-theme-dark-350 text-slate-200"
+                >
                   {template.title}
                 </option>
               ))}

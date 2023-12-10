@@ -1,12 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../Redux/hooks";
 import { useEffect } from "react";
-import { getDocuments } from "../../../Redux/documentsSlice";
+import { getProjects } from "../../../Redux/documentsSlice";
 import AddDocument from "../../molecules/addDocument/AddDocument";
 import SearchBar from "../../atoms/searchBar/SearchBar";
 import DocumentOptions from "../../molecules/documentsOptions/DocumentsOptions";
 import DocumentsGrid from "../../molecules/documentsGrid/DocumentsGrid";
-import { getPageOfDocuments, getUser } from "../../../api";
+import { getPageOfProjects, getUser } from "../../../api";
 import { DEFAULT_PAGE_PARAMS, TOAST_OPTIONS } from "../../../consts";
 import logger from "../../../logger";
 import { ERRORS, handleDocumentsError } from "../../../errors";
@@ -28,20 +28,15 @@ const Documents: React.FC = () => {
         toast.error(ERRORS.somethingWrong, TOAST_OPTIONS);
       });
 
-    getPageOfDocuments(params)
+    getPageOfProjects(params)
       .then((res) => {
-        dispatch(getDocuments(res.data));
+        dispatch(getProjects(res.data));
       })
       .catch((err) => {
         logger.error(err);
         handleDocumentsError(err, navigate);
       });
   }, []);
-
-  const logoutAction = () => {
-    sessionStorage.removeItem("userToken");
-    navigate("/");
-  };
 
   return (
     <div className="flex bg-project-theme-dark-300">
@@ -56,7 +51,7 @@ const Documents: React.FC = () => {
         </div>
         <div
           id="documents"
-          className="flex justify-center mr-14 h-[91.111%] bg-project-theme-dark-400 overflow-hidden hover:overflow-y-scroll"
+          className="flex  justify-center mr-14 h-[91.111%] bg-project-theme-dark-400 overflow-hidden hover:overflow-y-scroll"
           style={{ scrollbarGutter: "stable" }}
         >
           <DocumentsGrid />

@@ -1,7 +1,7 @@
-import { getPageOfDocuments } from "../../../api";
+import { getPageOfProjects } from "../../../api";
 import { useEffect, useState } from "react";
 import { useAppDispatch } from "../../../Redux/hooks";
-import { getDocuments } from "../../../Redux/documentsSlice";
+import { getProjects } from "../../../Redux/documentsSlice";
 import { DEFAULT_PAGE_PARAMS } from "../../../consts";
 
 const SearchBar: React.FC = () => {
@@ -11,10 +11,10 @@ const SearchBar: React.FC = () => {
 
   useEffect(() => {
     const searchParams = searchValue
-      ? `?search_phrase=${searchValue}&size=18`
+      ? `?search_phrase=${searchValue}&size=14`
       : DEFAULT_PAGE_PARAMS;
-    getPageOfDocuments(searchParams).then((res) =>
-      dispatch(getDocuments(res.data))
+    getPageOfProjects(searchParams).then((res) =>
+      dispatch(getProjects(res.data))
     );
   }, [searchValue]);
 

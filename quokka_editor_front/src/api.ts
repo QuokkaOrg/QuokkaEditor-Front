@@ -5,6 +5,7 @@ import {
   GET_PDF_URL,
   GET_TEMPLATES_URL,
   LOGIN_URL,
+  PROJECTS_URL,
   REGISTER_URL,
   SHARE_DOCUMENT_URL,
   TOKEN_REFRESH_URL,
@@ -22,19 +23,30 @@ export const getTemplates = () => {
   return axios.get(GET_TEMPLATES_URL, { headers: getHeaders() });
 };
 
-export const addNewDocument = (template: string) => {
-  return axios.post(DOCUMENTS_URL, null, {
-    params: template && { template_id: template },
-    headers: getHeaders(),
-  });
+export const addNewDocument = (project_id: string, template: string | null) => {
+  return axios.post(
+    DOCUMENTS_URL,
+    { template_id: template, project_id: project_id },
+    {
+      headers: getHeaders(),
+    }
+  );
+};
+
+export const addNewProject = () => {
+  return axios.post(PROJECTS_URL, null, { headers: getHeaders() });
 };
 
 export const deleteSelectedDocument = (docId: string) => {
   return axios.delete(DOCUMENTS_URL + docId, { headers: getHeaders() });
 };
 
-export const getPageOfDocuments = (queryParams: string) => {
-  return axios.get(DOCUMENTS_URL + queryParams, { headers: getHeaders() });
+export const deleteSelectedProject = (projectId: string) => {
+  return axios.delete(PROJECTS_URL + projectId, { headers: getHeaders() });
+};
+
+export const getPageOfProjects = (queryParams: string) => {
+  return axios.get(PROJECTS_URL + queryParams, { headers: getHeaders() });
 };
 
 export const loginUser = (loginData: LoginType) => {
@@ -99,7 +111,7 @@ export const refreshToken = () => {
 };
 
 export const throttledSearch = throttle(
-  async (searchQuery: string) => await getPageOfDocuments(searchQuery),
+  async (searchQuery: string) => await getPageOfProjects(searchQuery),
   300
 );
 

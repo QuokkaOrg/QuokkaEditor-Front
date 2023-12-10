@@ -1,40 +1,39 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
-import { deleteDocument } from "../../../Redux/documentsSlice";
 import Modal from "../../misc/Modal";
-import { deleteSelectedDocument } from "../../../api";
+import { deleteSelectedProject } from "../../../api";
 import logger from "../../../logger";
 import toast from "react-hot-toast";
 import { TOAST_MESSAGE, TOAST_OPTIONS } from "../../../consts";
 import { ERRORS } from "../../../errors";
+import { deleteProject } from "../../../Redux/documentsSlice";
 
-interface DeleteDocumentType {
+interface DeleteProjectType {
   id: string;
   title: string;
 }
 
 const DeleteDocument: React.FC = () => {
-  const documentsState = useAppSelector((state) => state.documents.items);
+  const projectsState = useAppSelector((state) => state.projects.items);
   const dispatch = useAppDispatch();
   const [deleteModal, setDeleteModal] = useState(false);
-  const [documentToDelete, setDocumentToDelete] = useState<
-    DeleteDocumentType | undefined
+  const [projectToDelete, setProjectToDelete] = useState<
+    DeleteProjectType | undefined
   >(undefined);
 
   useEffect(() => {
-    setDocumentToDelete(
-      documentsState.find((document) => {
-        if (document.selected)
-          return { id: document.id, title: document.title };
+    setProjectToDelete(
+      projectsState.find((project) => {
+        if (project.selected) return { id: project.id, title: project.title };
       })
     );
-  }, [documentsState]);
+  }, [projectsState]);
 
-  const deleteDoc = (docId: string | undefined) => {
-    if (!docId) return;
-    deleteSelectedDocument(docId)
+  const deleteProj = (projectId: string | undefined) => {
+    if (!projectId) return;
+    deleteSelectedProject(projectId)
       .then((res) => {
-        dispatch(deleteDocument(docId));
+        dispatch(deleteProject(projectId));
         toast.success(TOAST_MESSAGE.deleted, TOAST_OPTIONS);
         setDeleteModal((currDeleteModal) => !currDeleteModal);
       })
@@ -49,21 +48,21 @@ const DeleteDocument: React.FC = () => {
       <button
         type="button"
         className={` ${
-          documentToDelete ? "bg-red-500" : "bg-slate-400"
+          projectToDelete ? "bg-red-500" : "bg-slate-400"
         } m-1 w-32 h-24 font-semibold text-lg rounded-md  drop-shadow-[0_2px_2px_rgba(0,0,0,0.1)]`}
-        disabled={documentToDelete ? false : true}
+        disabled={projectToDelete ? false : true}
         onClick={() => setDeleteModal((currDeleteModal) => !currDeleteModal)}
       >
         Delete
       </button>
       {deleteModal && (
         <Modal setShowModal={setDeleteModal}>
-          <div className="flex flex-col justify-center items-center h-full">
-            <p>Do you want to delete document "{documentToDelete?.title}"?</p>
+          <div className="flex flex-col justify-center items-center h-full text-slate-200">
+            <p>Do you want to delete document "{projectToDelete?.title}"?</p>
             <div>
               <button
                 className="px-4 m-2 py-1 rounded-md bg-red-500 font-bold"
-                onClick={() => deleteDoc(documentToDelete?.id)}
+                onClick={() => deleteProj(projectToDelete?.id)}
               >
                 YES
               </button>

@@ -1,64 +1,75 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export interface DocumentState {
-  title: string;
-  content: string;
+// export interface ProjectState {
+//   title: string;
+//   content: string;
+//   id: string;
+//   selected: boolean;
+//   shared_role: string;
+//   shared_by_link: boolean;
+// }
+
+export interface ProjectState {
   id: string;
+  user_id: string;
+  title: string;
   selected: boolean;
-  shared_role: string;
-  shared_by_link: boolean;
+  images: unknown;
 }
 
-export interface DocumentsState {
-  items: DocumentState[];
+export interface ProjectsState {
+  items: ProjectState[];
+  total: number;
   pages: number;
   page: number;
   size: number;
 }
 
-const initialState: DocumentsState = {
+const initialState: ProjectsState = {
   items: [],
+  total: 0,
   pages: 0,
   page: 1,
-  size: 18,
+  size: 14,
 };
 
-export const documentsSlice = createSlice({
-  name: "documents",
+export const projectsSlice = createSlice({
+  name: "projects",
   initialState,
   reducers: {
-    getDocuments: (state, action: PayloadAction<DocumentsState>) => {
-      state.items = action.payload.items.map((document) => ({
-        title: document.title,
-        content: document.content,
-        id: document.id,
+    getProjects: (state, action: PayloadAction<ProjectsState>) => {
+      state.items = action.payload.items.map((project) => ({
+        id: project.id,
+        user_id: project.user_id,
+        title: project.title,
         selected: false,
-        shared_role: document.shared_role,
-        shared_by_link: document.shared_by_link,
+        images: project.images,
       }));
+      state.total = action.payload.total;
       state.pages = action.payload.pages;
       state.page = action.payload.page;
       state.size = action.payload.size;
     },
-    setSelectedDocument: (state, action: PayloadAction<string>) => {
-      state.items = state.items.map((document) => {
-        if (document.id === action.payload) {
-          return { ...document, selected: !document.selected };
+    setSelectedProject: (state, action: PayloadAction<string>) => {
+      state.items = state.items.map((project) => {
+        if (project.id === action.payload) {
+          return { ...project, selected: !project.selected };
         } else {
-          return { ...document, selected: false };
+          return { ...project, selected: false };
         }
       });
     },
-    deleteDocument: (state, action: PayloadAction<string>) => {
+    deleteProject: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter(
-        (document) => document.id !== action.payload
+        (project) => project.id !== action.payload
       );
     },
-    addDocument: (state, action: PayloadAction<DocumentState>) => {
+    addProject: (state, action: PayloadAction<ProjectState>) => {
       state.items = [...state.items, action.payload];
     },
-    clearDocuments: (state) => {
+    clearProjects: (state) => {
       state.items = initialState.items;
+      state.total = initialState.total;
       state.page = initialState.page;
       state.pages = initialState.pages;
       state.size = initialState.size;
@@ -67,11 +78,11 @@ export const documentsSlice = createSlice({
 });
 
 export const {
-  getDocuments,
-  deleteDocument,
-  addDocument,
-  setSelectedDocument,
-  clearDocuments,
-} = documentsSlice.actions;
+  getProjects,
+  deleteProject,
+  addProject,
+  setSelectedProject,
+  clearProjects,
+} = projectsSlice.actions;
 
-export default documentsSlice.reducer;
+export default projectsSlice.reducer;
