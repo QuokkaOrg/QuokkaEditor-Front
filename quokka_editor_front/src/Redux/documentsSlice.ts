@@ -14,6 +14,8 @@ export interface ProjectState {
   user_id: string;
   title: string;
   selected: boolean;
+  shared_role: string;
+  shared_by_link: boolean;
   images: unknown;
 }
 
@@ -44,6 +46,8 @@ export const projectsSlice = createSlice({
         title: project.title,
         selected: false,
         images: project.images,
+        shared_role: "READ",
+        shared_by_link: false,
       }));
       state.total = action.payload.total;
       state.pages = action.payload.pages;

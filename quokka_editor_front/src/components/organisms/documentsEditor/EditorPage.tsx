@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import DocumentsEditor from "./DocumentsEditor";
 import { ClientState } from "../../../types/ot";
 import { useLocation, useNavigate } from "react-router-dom";
-import DocumentTitleUpdate from "./DocumentTitleUpdate";
 import ShareDocument from "./ShareDocument";
-import { DocumentState } from "../../../Redux/documentsSlice";
-import { getSingleDocument } from "../../../api";
+import { ProjectState } from "../../../Redux/documentsSlice";
+import { getSingleProject } from "../../../api";
 import { handleEditorError } from "../../../errors";
+import ProjectTitleUpdate from "./DocumentTitleUpdate";
 
 const initialClient = {
   lastSyncedRevision: 0,
@@ -15,18 +15,20 @@ const initialClient = {
   documentState: "",
 };
 
-const initialDocument = {
+const initialProject = {
   title: "",
   content: " ",
   id: "",
+  user_id: "",
   selected: false,
   shared_role: "READ",
   shared_by_link: false,
+  images: [],
 };
 
 const EditorPage = () => {
   const [client, setClient] = useState<ClientState>(initialClient);
-  const [document, setDocument] = useState<DocumentState>(initialDocument);
+  const [project, setProject] = useState<ProjectState>(initialProject);
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -36,14 +38,15 @@ const EditorPage = () => {
   );
 
   useEffect(() => {
-    getSingleDocument(id)
+    getSingleProject(id)
       .then((res) => {
-        setClient({
-          ...client,
-          documentState: JSON.parse(res.data.content).join("\n"),
-          lastSyncedRevision: JSON.parse(res.data.last_revision),
-        });
-        setDocument(res.data);
+        console.log(res.data.documents);
+        // setClient({
+        //   ...client,
+        //   documentState: JSON.parse(res.data.content).join("\n"),
+        //   lastSyncedRevision: JSON.parse(res.data.last_revision),
+        // });
+        setProject(res.data.project);
       })
       .catch((err) => handleEditorError(err, navigate));
   }, []);
@@ -52,10 +55,10 @@ const EditorPage = () => {
     <div id="EditorContainer" className="flex flex-col">
       <div id="EditorNavBar">
         <div className="flex justify-between items-center mx-6 bg-project-theme-dark-300 text-white m-5">
-          <DocumentTitleUpdate
+          <ProjectTitleUpdate
             id={id}
-            title={document.title}
-            setTitle={setDocument}
+            title={project.title}
+            setTitle={setProject}
           />
           <div className="flex text-[#B9B9B9]">
             <button className="mx-6 flex text-[25px]">
@@ -69,13 +72,12 @@ const EditorPage = () => {
               Insert <img src="/arrow.svg" className="p-4"></img>
             </button>
           </div>
-          {/* todo share onclick*/}
           <ShareDocument
-            docId={id}
-            title={document.title}
-            isShared={document.shared_by_link}
-            sharedPrivileges={document.shared_role}
-            setDocumentPrivileges={setDocument}
+            projectId={id}
+            title={project.title}
+            isShared={project.shared_by_link}
+            sharedPrivileges={project.shared_role}
+            setProjectPrivileges={setProject}
           />
         </div>
       </div>

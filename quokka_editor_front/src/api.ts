@@ -1,13 +1,13 @@
 import axios from "axios";
 import {
-  CURRENT_DOCUMENT_URL,
+  CURRENT_PROJECT_URL,
   DOCUMENTS_URL,
   GET_PDF_URL,
   GET_TEMPLATES_URL,
   LOGIN_URL,
   PROJECTS_URL,
   REGISTER_URL,
-  SHARE_DOCUMENT_URL,
+  SHARE_PROJECT_URL,
   TOKEN_REFRESH_URL,
   USER_DATA_URL,
 } from "./apiUrls";
@@ -33,8 +33,12 @@ export const addNewDocument = (project_id: string, template: string | null) => {
   );
 };
 
-export const addNewProject = () => {
-  return axios.post(PROJECTS_URL, null, { headers: getHeaders() });
+export const addNewProject = (projectTitle: string) => {
+  return axios.post(
+    PROJECTS_URL,
+    { title: projectTitle ? projectTitle : "New Project" },
+    { headers: getHeaders() }
+  );
 };
 
 export const deleteSelectedDocument = (docId: string) => {
@@ -59,14 +63,14 @@ export const registerUser = (registerData: RegisterType) => {
 
 export const updateTitle = (docId: string, updatedTitle: string) => {
   return axios.patch(
-    CURRENT_DOCUMENT_URL + docId,
+    CURRENT_PROJECT_URL + docId,
     { title: updatedTitle },
     { headers: getHeaders() }
   );
 };
 
-export const getSingleDocument = (docId: string) => {
-  return axios.get(CURRENT_DOCUMENT_URL + docId, { headers: getHeaders() });
+export const getSingleProject = (projectId: string) => {
+  return axios.get(CURRENT_PROJECT_URL + projectId, { headers: getHeaders() });
 };
 
 export const getPDF = (docId: string) => {
@@ -76,13 +80,13 @@ export const getPDF = (docId: string) => {
   });
 };
 
-export const changeDocumentPrivileges = (
-  docId: string,
+export const changeProjectPrivileges = (
+  projectId: string,
   privileges: string,
   isDocumentShared: boolean
 ) => {
   return axios.post(
-    SHARE_DOCUMENT_URL + docId,
+    SHARE_PROJECT_URL + projectId,
     {
       shared_role: privileges,
       shared_by_link: isDocumentShared,
@@ -91,13 +95,13 @@ export const changeDocumentPrivileges = (
   );
 };
 
-export const shareDocument = (
-  docId: string,
+export const shareProject = (
+  projectId: string,
   privileges: string,
   isDocumentShared: boolean
 ) => {
   return axios.post(
-    SHARE_DOCUMENT_URL + docId,
+    SHARE_PROJECT_URL + projectId,
     {
       shared_role: privileges,
       shared_by_link: !isDocumentShared,

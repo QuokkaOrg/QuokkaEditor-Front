@@ -26,7 +26,7 @@ const router = createBrowserRouter([
     path: "/documents",
     element: <Documents />,
   },
-  { path: "/documents/:documentId", element: <EditorPage /> },
+  { path: "/projects/:projectId", element: <EditorPage /> },
   { path: "/404", element: <NotFoundPage /> },
   { path: "/profile", element: <ProfilePage /> },
 ]);

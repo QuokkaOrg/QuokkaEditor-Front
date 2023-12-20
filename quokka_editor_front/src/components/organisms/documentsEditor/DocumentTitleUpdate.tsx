@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { DocumentState } from "../../../Redux/documentsSlice";
+import { ProjectState } from "../../../Redux/documentsSlice";
 import { updateTitle } from "../../../api";
 import toast from "react-hot-toast";
 import { TOAST_OPTIONS } from "../../../consts";
 import { ERRORS } from "../../../errors";
 
-interface DocumentTitleUpdateProps {
+interface ProjectTitleUpdateProps {
   id: string;
   title: string;
-  setTitle: React.Dispatch<React.SetStateAction<DocumentState>>;
+  setTitle: React.Dispatch<React.SetStateAction<ProjectState>>;
 }
 
-const DocumentTitleUpdate: React.FC<DocumentTitleUpdateProps> = ({
+const ProjectTitleUpdate: React.FC<ProjectTitleUpdateProps> = ({
   id,
   title,
   setTitle,
@@ -25,7 +25,7 @@ const DocumentTitleUpdate: React.FC<DocumentTitleUpdateProps> = ({
       .then(() => {
         toast.success("Title Changed", TOAST_OPTIONS);
         setIsEditable((currEditable) => !currEditable);
-        setTitle((currDocument) => ({ ...currDocument, title: newTitle }));
+        setTitle((currProject) => ({ ...currProject, title: newTitle }));
       })
       .catch(() => {
         toast.error(ERRORS.somethingWrong, TOAST_OPTIONS);
@@ -64,4 +64,4 @@ const DocumentTitleUpdate: React.FC<DocumentTitleUpdateProps> = ({
   );
 };
 
-export default DocumentTitleUpdate;
+export default ProjectTitleUpdate;

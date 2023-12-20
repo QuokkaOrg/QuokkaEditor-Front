@@ -9,7 +9,7 @@ export const TOAST_OPTIONS = {
 };
 
 export const TOAST_MESSAGE = {
-  deleted: "Document deleted!",
+  deleted: "Project deleted!",
   urlCopied: "URL copied to clipboard!",
   privilegesChanged: "Privileges changed!",
   documentShared: "Your document is now shared",

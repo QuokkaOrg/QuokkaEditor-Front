@@ -16,26 +16,17 @@ const AddDocument: React.FC = () => {
   const navigate = useNavigate();
   const [addModal, setAddModal] = useState(false);
   const [templates, setTemplates] = useState<TemplateType[]>([]);
-  const [pickedTemplate, setPickedTemplate] = useState<string | null>(null);
+  const [projectTitle, setProjectTitle] = useState<string>("");
   useEffect(() => {
     getTemplates().then((res) => setTemplates(res.data.items));
   }, []);
 
-  const addDoc = (pickedTemplate: string | null) => {
-    addNewProject()
+  const addDoc = (title: string) => {
+    addNewProject(title)
       .then((res) => {
-        const projectResponse = res.data;
-        addNewDocument(res.data.id, pickedTemplate)
-          .then((res) => {
-            dispatch(addProject(projectResponse));
-            setAddModal(!addModal);
-            navigate(res.data.id);
-          })
-          .catch((err) => {
-            logger.error(err);
-            setAddModal(!addModal);
-            toast.error(ERRORS.somethingWrong, TOAST_OPTIONS);
-          });
+        dispatch(addProject(res.data));
+        setAddModal(!addModal);
+        navigate(res.data.id);
       })
       .catch((err: AxiosError) => {
         logger.error(err);
@@ -55,34 +46,18 @@ const AddDocument: React.FC = () => {
       {addModal && (
         <Modal setShowModal={setAddModal}>
           <div className="flex flex-col justify-center items-center rounded-2xl h-full bg-project-theme-dark-200 text-slate-200">
-            <p>Add new document</p>
-            <select
-              className="px-3 py-2 my-1 border-b outline-none bg-transparent"
-              value={pickedTemplate ? pickedTemplate : ""}
-              name="templateSelection"
-              onChange={(e) => setPickedTemplate(e.target.value)}
-            >
-              <option
-                value=""
-                disabled
-                className="bg-project-theme-dark-350 text-slate-200"
-              >
-                Pick a template
-              </option>
-              {templates?.map((template) => (
-                <option
-                  key={template.id}
-                  value={template.id}
-                  className="bg-project-theme-dark-350 text-slate-200"
-                >
-                  {template.title}
-                </option>
-              ))}
-            </select>
+            <h3 className="font-bold text-lg m-2">Add new project</h3>
+            <input
+              type="text"
+              className="px-0 py-1 mx-0 my-2 border-b outline-none bg-transparent text-white"
+              value={projectTitle}
+              placeholder="Project Title"
+              onChange={(e) => setProjectTitle(e.target.value)}
+            />
             <div>
               <button
                 className="px-4 m-2 py-1 rounded-md bg-project-window-bonus-100 font-bold"
-                onClick={() => addDoc(pickedTemplate)}
+                onClick={() => addDoc(projectTitle)}
               >
                 Add
               </button>

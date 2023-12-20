@@ -58,7 +58,9 @@ const DeleteDocument: React.FC = () => {
       {deleteModal && (
         <Modal setShowModal={setDeleteModal}>
           <div className="flex flex-col justify-center items-center h-full text-slate-200">
-            <p>Do you want to delete document "{projectToDelete?.title}"?</p>
+            <h3 className="font-semibold text-lg m-2">
+              Do you want to delete project "{projectToDelete?.title}"?
+            </h3>
             <div>
               <button
                 className="px-4 m-2 py-1 rounded-md bg-red-500 font-bold"
