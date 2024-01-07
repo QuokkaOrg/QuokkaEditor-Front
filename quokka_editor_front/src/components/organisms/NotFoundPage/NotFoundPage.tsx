@@ -12,7 +12,7 @@ const NotFoundPage: React.FC = () => {
           Sorry, the page you are looking for could not be found.
         </p>
         <a
-          href="/documents"
+          href="/projects"
           className="flex items-center space-x-2 bg-project-window-bonus-100 hover:bg-project-window-bonus-150 text-gray-100 px-4 py-2 mt-6 rounded transition duration-150"
           title="Return Home"
         >

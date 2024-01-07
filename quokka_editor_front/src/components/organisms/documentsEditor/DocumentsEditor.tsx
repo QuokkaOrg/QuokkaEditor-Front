@@ -20,12 +20,13 @@ import {
 import { sendChanges } from "./ot";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { DocumentState } from "../../../Redux/documentsSlice";
+import { DocumentType } from "../../../types/global";
 
 interface DocumentsEditorProps {
   client: ClientState;
   setClient: React.Dispatch<React.SetStateAction<ClientState>>;
   id: string;
-  editingDocument: DocumentState;
+  editingDocument: DocumentType;
 }
 
 const initialScroll = {
@@ -57,9 +58,16 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
 
   const dispatch = useAppDispatch();
   const remoteClients = useAppSelector((state) => state.clients.clients);
+  const username = useAppSelector((state) => state.user.username);
 
   useEffect(() => {
-    const s = createWebSocket(id, editorRef.current, setClient, dispatch);
+    const s = createWebSocket(
+      id,
+      editorRef.current,
+      username,
+      setClient,
+      dispatch
+    );
     socket.current = s;
     return () => s.close();
   }, []);
@@ -90,8 +98,6 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
     sendChanges(socket, client, setClient);
   }, [client.sentChanges]);
 
-
-  
   return (
     <div className="grid grid-cols-2">
       <CodeMirror

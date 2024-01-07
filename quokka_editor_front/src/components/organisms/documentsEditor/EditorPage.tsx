@@ -7,6 +7,8 @@ import { ProjectState } from "../../../Redux/documentsSlice";
 import { getSingleProject } from "../../../api";
 import { handleEditorError } from "../../../errors";
 import ProjectTitleUpdate from "./DocumentTitleUpdate";
+import { DocumentType } from "../../../types/global";
+import DocumentsList from "./DocumentsList";
 
 const initialClient = {
   lastSyncedRevision: 0,
@@ -26,9 +28,21 @@ const initialProject = {
   images: [],
 };
 
+const initialDocument = {
+  id: "",
+  title: "",
+  content: "",
+  user_id: "",
+  project_id: "",
+  last_revision: 0,
+};
+
 const EditorPage = () => {
   const [client, setClient] = useState<ClientState>(initialClient);
   const [project, setProject] = useState<ProjectState>(initialProject);
+  const [documents, setDocuments] = useState<DocumentType[]>([]);
+  const [activeDocument, setActiveDocument] =
+    useState<DocumentType>(initialDocument);
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -40,16 +54,28 @@ const EditorPage = () => {
   useEffect(() => {
     getSingleProject(id)
       .then((res) => {
-        console.log(res.data.documents);
+        console.log(res.data);
         // setClient({
         //   ...client,
         //   documentState: JSON.parse(res.data.content).join("\n"),
         //   lastSyncedRevision: JSON.parse(res.data.last_revision),
         // });
+        setDocuments(res.data.documents);
         setProject(res.data.project);
       })
       .catch((err) => handleEditorError(err, navigate));
   }, []);
+
+  useEffect(() => {
+    console.log(activeDocument.content);
+    setClient({
+      ...client,
+      documentState: activeDocument.content
+        ? JSON.parse(activeDocument.content).join("\n")
+        : activeDocument.content,
+      lastSyncedRevision: activeDocument.last_revision,
+    });
+  }, [activeDocument]);
 
   return (
     <div id="EditorContainer" className="flex flex-col">
@@ -81,14 +107,21 @@ const EditorPage = () => {
           />
         </div>
       </div>
-      <div id="FilesBar" className="bg-project-there-dark-400 bg-[#3A3C4E] p-1">
-        <img src="/typesrc.svg" className="ml-1"></img>
+      <div
+        id="FilesBar"
+        className="flex bg-project-there-dark-400 bg-[#3A3C4E] p-1"
+      >
+        <img src="/typesrc.svg" className="mx-1" title="Documents List"></img>
+        <DocumentsList
+          documents={documents}
+          setActiveDocument={setActiveDocument}
+        />
       </div>
       <DocumentsEditor
         client={client}
         setClient={setClient}
         id={id}
-        editingDocument={document}
+        editingDocument={activeDocument}
       />
     </div>
   );

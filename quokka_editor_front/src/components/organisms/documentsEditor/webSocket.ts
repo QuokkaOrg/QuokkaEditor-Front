@@ -11,25 +11,30 @@ import logger from "../../../logger";
 import { ClientState, CursorType, OperationType } from "../../../types/ot";
 import { transform } from "./ot";
 import { AnyAction, Dispatch } from "redux";
-import { DocumentsState } from "../../../Redux/documentsSlice";
+import { DocumentsState, ProjectsState } from "../../../Redux/documentsSlice";
 import { store } from "../../../Redux/store";
+import { DocumentType } from "../../../types/global";
+import { UserState } from "../../../Redux/userSlice";
 
 export const createWebSocket = (
   id: string,
   editor: CodeMirror.Editor | null,
+  username: string,
   setClient: React.Dispatch<React.SetStateAction<ClientState>>,
   dispatchClients: ThunkDispatch<
     {
-      documents: DocumentsState;
+      projects: ProjectsState;
       clients: RemoteClients;
+      user: UserState;
     },
     undefined,
     AnyAction
   > &
     Dispatch<AnyAction>
 ) => {
-  const userToken = "?token=" + sessionStorage.getItem("userToken")?.slice(7);
-  const s = new WebSocket(WEBSOCKET_URL + id + userToken);
+  const userToken = "&token=" + sessionStorage.getItem("userToken")?.slice(7);
+  const usernameParam = "?username=" + username;
+  const s = new WebSocket(WEBSOCKET_URL + id + usernameParam + userToken);
 
   s.onopen = (e) => {
     logger.log("Connected to WebSocket");
