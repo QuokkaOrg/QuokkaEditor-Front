@@ -20,7 +20,7 @@ const ProfilePage: React.FC = () => {
     <div className="h-screen w-screen">
       <div
         className="flex absolute top-0 left-0 m-6 px-2 cursor-pointer rounded-full outline-1 outline-slate-300 hover:outline transition-all"
-        onClick={() => navigate("/documents")}
+        onClick={() => navigate("/projects")}
       >
         <img className="rotate-90" src="/arrow.svg" alt="arrow" />
         <span className="p-2 font-bold text-lg text-slate-300">Go back</span>

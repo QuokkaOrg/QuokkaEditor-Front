@@ -42,8 +42,8 @@ const Profile: React.FC = () => {
         </div>
       </div>
       {show && (
-        <div className="flex flex-col justify-center text-white m-1 w-72 h-48 rounded-3xl right-0 bg-project-theme-dark-600 items-center mr-14  absolute">
-          <span className="text-4xl m-2">{userName}</span>
+        <div className="flex flex-col justify-center text-white m-1 w-72 h-48 rounded-3xl right-0 bg-project-theme-dark-600 items-center mr-14  absolute z-10">
+          <span className="text-4xl m-2">Hello, {userName}!</span>
           <button className={buttonsStyle} onClick={() => navigate("/profile")}>
             Manage your account
           </button>
