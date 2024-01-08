@@ -11,7 +11,7 @@ import logger from "../../../logger";
 import { ClientState, CursorType, OperationType } from "../../../types/ot";
 import { transform } from "./ot";
 import { AnyAction, Dispatch } from "redux";
-import { DocumentsState, ProjectsState } from "../../../Redux/documentsSlice";
+import { ProjectsState } from "../../../Redux/documentsSlice";
 import { store } from "../../../Redux/store";
 import { DocumentType } from "../../../types/global";
 import { UserState } from "../../../Redux/userSlice";
@@ -32,12 +32,12 @@ export const createWebSocket = (
   > &
     Dispatch<AnyAction>
 ) => {
-  const userToken = "&token=" + sessionStorage.getItem("userToken")?.slice(7);
+  const userToken = "?token=" + sessionStorage.getItem("userToken")?.slice(7);
   const usernameParam = "?username=" + username;
-  const s = new WebSocket(WEBSOCKET_URL + id + usernameParam + userToken);
+  const s = new WebSocket(WEBSOCKET_URL + id + userToken);
 
   s.onopen = (e) => {
-    logger.log("Connected to WebSocket");
+    logger.log("Connected to WebSocket, doc: ", id);
   };
   s.onclose = (e) => {
     logger.log("Disconnected from WebSocket");
@@ -46,8 +46,10 @@ export const createWebSocket = (
     logger.error("Websocket Error: " + err);
   };
   s.onmessage = (e) => {
+    console.log(e.data);
     const eventData = JSON.parse(e.data);
-    if (eventData.message === "ACK") {
+
+    if (eventData.type === "ACKNOWLEDGE") {
       setClient((prevClient) => ({
         ...prevClient,
         lastSyncedRevision: eventData.revision_log,
@@ -56,8 +58,8 @@ export const createWebSocket = (
     } else if (eventData.message) {
       dispatchClients(deleteRemoteClient(eventData.user_token));
     }
-    if (!eventData.data) {
-      const message: OperationType = JSON.parse(e.data);
+    if (eventData.type === "EXT_CHANGE") {
+      const message: OperationType = eventData.data;
       if (message.text) {
         setClient((prevClient) => ({
           ...prevClient,

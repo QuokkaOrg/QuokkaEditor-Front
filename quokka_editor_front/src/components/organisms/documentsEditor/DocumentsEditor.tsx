@@ -61,16 +61,13 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
   const username = useAppSelector((state) => state.user.username);
 
   useEffect(() => {
-    const s = createWebSocket(
-      id,
-      editorRef.current,
-      username,
-      setClient,
-      dispatch
-    );
+    const docId = "/" + editingDocument.id;
+    const s = editingDocument.id
+      ? createWebSocket(docId, editorRef.current, username, setClient, dispatch)
+      : null;
     socket.current = s;
-    return () => s.close();
-  }, []);
+    return () => s?.close();
+  }, [editingDocument]);
 
   useEffect(() => {
     const handler = () => {

@@ -9,6 +9,7 @@ import { handleEditorError } from "../../../errors";
 import ProjectTitleUpdate from "./DocumentTitleUpdate";
 import { DocumentType } from "../../../types/global";
 import DocumentsList from "./DocumentsList";
+import { useAppSelector } from "../../../Redux/hooks";
 
 const initialClient = {
   lastSyncedRevision: 0,
@@ -54,20 +55,20 @@ const EditorPage = () => {
   useEffect(() => {
     getSingleProject(id)
       .then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
         // setClient({
         //   ...client,
         //   documentState: JSON.parse(res.data.content).join("\n"),
         //   lastSyncedRevision: JSON.parse(res.data.last_revision),
         // });
         setDocuments(res.data.documents);
+        setActiveDocument(res.data.documents[0]);
         setProject(res.data.project);
       })
       .catch((err) => handleEditorError(err, navigate));
   }, []);
 
   useEffect(() => {
-    console.log(activeDocument.content);
     setClient({
       ...client,
       documentState: activeDocument.content

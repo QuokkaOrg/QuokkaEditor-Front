@@ -51,6 +51,7 @@ export const onBeforeChangeHandler = (
     revision: client.lastSyncedRevision,
     type: data.origin?.toUpperCase(),
   };
+
   if (data.origin) {
     if (client.sentChanges === null) {
       socket.current.send(JSON.stringify(operation));
