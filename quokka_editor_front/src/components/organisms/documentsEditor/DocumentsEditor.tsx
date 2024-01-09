@@ -58,12 +58,11 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
 
   const dispatch = useAppDispatch();
   const remoteClients = useAppSelector((state) => state.clients.clients);
-  const username = useAppSelector((state) => state.user.username);
 
   useEffect(() => {
     const docId = "/" + editingDocument.id;
     const s = editingDocument.id
-      ? createWebSocket(docId, editorRef.current, username, setClient, dispatch)
+      ? createWebSocket(docId, editorRef.current, setClient, dispatch)
       : null;
     socket.current = s;
     return () => s?.close();
@@ -135,7 +134,7 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
       {remoteClients?.map((cursor) => {
         return (
           <RemoteCursor
-            key={cursor.token}
+            key={cursor.user_token}
             cursorData={cursor}
             editor={editorRef.current}
             scrollInfo={scrollInfo}
