@@ -1,6 +1,6 @@
 import ReactPaginate from "react-paginate";
 import { useAppSelector, useAppDispatch } from "../../../Redux/hooks";
-import DocumentBox from "../../atoms/projectBox/ProjectBox";
+import DocumentBox from "../../atoms/documentBox/DocumentBox";
 import { getProjects } from "../../../Redux/projectsSlice";
 import { getPageOfProjects } from "../../../api";
 import logger from "../../../logger";
