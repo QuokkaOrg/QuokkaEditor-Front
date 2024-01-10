@@ -1,7 +1,7 @@
 import { getPageOfProjects } from "../../../api";
 import { useEffect, useState } from "react";
 import { useAppDispatch } from "../../../Redux/hooks";
-import { getProjects } from "../../../Redux/documentsSlice";
+import { getProjects } from "../../../Redux/projectsSlice";
 import { DEFAULT_PAGE_PARAMS } from "../../../consts";
 
 const SearchBar: React.FC = () => {

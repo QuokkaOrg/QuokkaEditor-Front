@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../Redux/hooks";
-import { setSelectedProject } from "../../../Redux/documentsSlice";
+import { setSelectedProject } from "../../../Redux/projectsSlice";
 
 interface DocumentBoxProps {
   title: string;

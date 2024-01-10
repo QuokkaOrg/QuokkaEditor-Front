@@ -2,7 +2,7 @@ import { PARSER_STYLES_URL, TOAST_OPTIONS } from "../../../consts";
 import { ClientState, OperationType, Pos } from "../../../types/ot";
 import { parse } from "latex.js";
 import { getPDF } from "../../../api";
-import { DocumentState } from "../../../Redux/documentsSlice";
+import { DocumentState } from "../../../Redux/projectsSlice";
 import toast from "react-hot-toast";
 import { DocumentType } from "../../../types/global";
 
@@ -37,13 +37,7 @@ export const onBeforeChangeHandler = (
   document: DocumentType
 ) => {
   if (!socket.current) return;
-  // if (!canEdit(document)) {
-  //   toast.error(
-  //     "You don't have permission to edit this document",
-  //     TOAST_OPTIONS
-  //   );
-  //   return;
-  // }
+
   const operation: OperationType = {
     from_pos: { line: data.from.line, ch: data.from.ch },
     to_pos: { line: data.to.line, ch: data.to.ch },

@@ -5,7 +5,7 @@ import { TemplateType } from "../../../types/global";
 import { useNavigate } from "react-router-dom";
 import logger from "../../../logger";
 import { addNewDocument, addNewProject, getTemplates } from "../../../api";
-import { addProject } from "../../../Redux/documentsSlice";
+import { addProject } from "../../../Redux/projectsSlice";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { TOAST_OPTIONS } from "../../../consts";

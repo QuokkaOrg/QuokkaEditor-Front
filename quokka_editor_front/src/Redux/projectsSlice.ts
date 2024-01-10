@@ -1,14 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// export interface ProjectState {
-//   title: string;
-//   content: string;
-//   id: string;
-//   selected: boolean;
-//   shared_role: string;
-//   shared_by_link: boolean;
-// }
-
 export interface ProjectState {
   id: string;
   user_id: string;

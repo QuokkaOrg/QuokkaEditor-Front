@@ -3,10 +3,10 @@ import DocumentsEditor from "./DocumentsEditor";
 import { ClientState } from "../../../types/ot";
 import { useLocation, useNavigate } from "react-router-dom";
 import ShareDocument from "./ShareDocument";
-import { ProjectState } from "../../../Redux/documentsSlice";
+import { ProjectState } from "../../../Redux/projectsSlice";
 import { getSingleProject } from "../../../api";
 import { handleEditorError } from "../../../errors";
-import ProjectTitleUpdate from "./DocumentTitleUpdate";
+import ProjectTitleUpdate from "./ProjectTitleUpdate";
 import { DocumentType } from "../../../types/global";
 import DocumentsList from "./DocumentsList";
 import { useAppSelector } from "../../../Redux/hooks";
@@ -55,12 +55,6 @@ const EditorPage = () => {
   useEffect(() => {
     getSingleProject(id)
       .then((res) => {
-        //console.log(res.data);
-        // setClient({
-        //   ...client,
-        //   documentState: JSON.parse(res.data.content).join("\n"),
-        //   lastSyncedRevision: JSON.parse(res.data.last_revision),
-        // });
         setDocuments(res.data.documents);
         setActiveDocument(res.data.documents[0]);
         setProject(res.data.project);

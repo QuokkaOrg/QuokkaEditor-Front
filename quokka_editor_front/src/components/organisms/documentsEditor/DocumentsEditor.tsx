@@ -19,7 +19,7 @@ import {
 } from "./handlers";
 import { sendChanges } from "./ot";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
-import { DocumentState } from "../../../Redux/documentsSlice";
+import { DocumentState } from "../../../Redux/projectsSlice";
 import { DocumentType } from "../../../types/global";
 
 interface DocumentsEditorProps {

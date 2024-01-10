@@ -12,7 +12,7 @@ import logger from "../../../logger";
 import { ClientState, OperationType } from "../../../types/ot";
 import { transform } from "./ot";
 import { AnyAction, Dispatch } from "redux";
-import { ProjectsState } from "../../../Redux/documentsSlice";
+import { ProjectsState } from "../../../Redux/projectsSlice";
 import { store } from "../../../Redux/store";
 import { UserState } from "../../../Redux/userSlice";
 

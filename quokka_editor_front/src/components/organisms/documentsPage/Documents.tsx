@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../Redux/hooks";
 import { useEffect } from "react";
-import { getProjects } from "../../../Redux/documentsSlice";
+import { getProjects } from "../../../Redux/projectsSlice";
 import AddDocument from "../../molecules/addDocument/AddDocument";
 import SearchBar from "../../atoms/searchBar/SearchBar";
 import DocumentOptions from "../../molecules/documentsOptions/DocumentsOptions";

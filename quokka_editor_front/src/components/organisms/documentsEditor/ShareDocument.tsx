@@ -1,10 +1,7 @@
 import { useState } from "react";
 import Modal from "../../misc/Modal";
-import { ProjectState } from "../../../Redux/documentsSlice";
-import {
-  changeProjectPrivileges,
-  shareProject,
-} from "../../../api";
+import { ProjectState } from "../../../Redux/projectsSlice";
+import { changeProjectPrivileges, shareProject } from "../../../api";
 import toast from "react-hot-toast";
 import { TOAST_MESSAGE, TOAST_OPTIONS } from "../../../consts";
 import { ERRORS } from "../../../errors";

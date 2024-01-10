@@ -6,7 +6,7 @@ import logger from "../../../logger";
 import toast from "react-hot-toast";
 import { TOAST_MESSAGE, TOAST_OPTIONS } from "../../../consts";
 import { ERRORS } from "../../../errors";
-import { deleteProject } from "../../../Redux/documentsSlice";
+import { deleteProject } from "../../../Redux/projectsSlice";
 
 interface DeleteProjectType {
   id: string;

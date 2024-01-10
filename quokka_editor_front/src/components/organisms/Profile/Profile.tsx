@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { clearUser } from "../../../Redux/userSlice";
-import { clearProjects } from "../../../Redux/documentsSlice";
+import { clearProjects } from "../../../Redux/projectsSlice";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { TOAST_MESSAGE, TOAST_OPTIONS } from "../../../consts";

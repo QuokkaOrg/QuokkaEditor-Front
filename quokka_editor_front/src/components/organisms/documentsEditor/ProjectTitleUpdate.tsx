@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProjectState } from "../../../Redux/documentsSlice";
+import { ProjectState } from "../../../Redux/projectsSlice";
 import { updateTitle } from "../../../api";
 import toast from "react-hot-toast";
 import { TOAST_OPTIONS } from "../../../consts";
