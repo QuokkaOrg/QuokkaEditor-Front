@@ -4,8 +4,8 @@ import Modal from "../../misc/Modal";
 import { TemplateType } from "../../../types/global";
 import { useNavigate } from "react-router-dom";
 import logger from "../../../logger";
-import { addNewDocument, getTemplates } from "../../../api";
-import { addDocument } from "../../../Redux/documentsSlice";
+import { addNewDocument, addNewProject, getTemplates } from "../../../api";
+import { addProject } from "../../../Redux/projectsSlice";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { TOAST_OPTIONS } from "../../../consts";
@@ -16,15 +16,15 @@ const AddDocument: React.FC = () => {
   const navigate = useNavigate();
   const [addModal, setAddModal] = useState(false);
   const [templates, setTemplates] = useState<TemplateType[]>([]);
-  const [pickedTemplate, setPickedTemplate] = useState<string>("");
+  const [projectTitle, setProjectTitle] = useState<string>("");
   useEffect(() => {
     getTemplates().then((res) => setTemplates(res.data.items));
   }, []);
 
-  const addDoc = (pickedTemplate: string) => {
-    addNewDocument(pickedTemplate)
+  const addDoc = (title: string) => {
+    addNewProject(title)
       .then((res) => {
-        dispatch(addDocument(res.data));
+        dispatch(addProject(res.data));
         setAddModal(!addModal);
         navigate(res.data.id);
       })
@@ -45,27 +45,19 @@ const AddDocument: React.FC = () => {
       </button>
       {addModal && (
         <Modal setShowModal={setAddModal}>
-          <div className="flex flex-col justify-center items-center h-full bg-project-theme-dark-200 text-white">
-            <p>Add new document</p>
-            <select
-              className="m-1 border-2 border-cyan-200 rounded-md p-1"
-              value={pickedTemplate}
-              name="templateSelection"
-              onChange={(e) => setPickedTemplate(e.target.value)}
-            >
-              <option value="" disabled>
-                Pick a template
-              </option>
-              {templates?.map((template) => (
-                <option key={template.id} value={template.id}>
-                  {template.title}
-                </option>
-              ))}
-            </select>
+          <div className="flex flex-col justify-center items-center rounded-2xl h-full bg-project-theme-dark-200 text-slate-200">
+            <h3 className="font-bold text-lg m-2">Add new project</h3>
+            <input
+              type="text"
+              className="px-0 py-1 mx-0 my-2 border-b outline-none bg-transparent text-white"
+              value={projectTitle}
+              placeholder="Project Title"
+              onChange={(e) => setProjectTitle(e.target.value)}
+            />
             <div>
               <button
                 className="px-4 m-2 py-1 rounded-md bg-project-window-bonus-100 font-bold"
-                onClick={() => addDoc(pickedTemplate)}
+                onClick={() => addDoc(projectTitle)}
               >
                 Add
               </button>

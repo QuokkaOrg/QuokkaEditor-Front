@@ -1,32 +1,41 @@
 import { useNavigate } from "react-router-dom";
-import DeleteDocument from "../../molecules/deleteDocument/DeleteDocument";
 import { useAppDispatch } from "../../../Redux/hooks";
-import { setSelectedDocument } from "../../../Redux/documentsSlice";
+import { setSelectedProject } from "../../../Redux/projectsSlice";
 
 interface DocumentBoxProps {
   title: string;
   id: string;
   selected: boolean;
+  even: boolean;
   content?: string;
 }
 
-const DocumentBox: React.FC<DocumentBoxProps> = ({ title, id, selected }) => {
+const DocumentBox: React.FC<DocumentBoxProps> = ({
+  title,
+  id,
+  selected,
+  even,
+}) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const onDoubleClickHandler = () => {
-    navigate("/documents/" + id);
+    navigate("/projects/" + id);
   };
 
   const onClickHandler = () => {
-    dispatch(setSelectedDocument(id));
+    dispatch(setSelectedProject(id));
   };
 
   return (
     <div
       className={`${
-        selected ? "border-2 border-cyan-500 shadow-md" : null
-      } h-48 w-56 rounded-md text-white bg-[#20222B]`}
+        selected ? "outline outline-2 outline-cyan-600 shadow-md" : null
+      } ${
+        even
+          ? "bg-project-theme-dark-200"
+          : "bg-project-theme-dark-300 opacity-90"
+      } px-4 py-2 mt-3 w-full rounded-md text-slate-200 font-semibold cursor-pointer`}
       onDoubleClick={onDoubleClickHandler}
       onClick={onClickHandler}
     >

@@ -1,33 +1,33 @@
 import { useState } from "react";
 import Modal from "../../misc/Modal";
-import { DocumentState } from "../../../Redux/documentsSlice";
-import { changeDocumentPrivileges, shareDocument } from "../../../api";
+import { ProjectState } from "../../../Redux/projectsSlice";
+import { changeProjectPrivileges, shareProject } from "../../../api";
 import toast from "react-hot-toast";
 import { TOAST_MESSAGE, TOAST_OPTIONS } from "../../../consts";
 import { ERRORS } from "../../../errors";
 
-interface ShareDocumentProps {
-  docId: string;
+interface ShareProjectProps {
+  projectId: string;
   title: string;
   isShared: boolean;
   sharedPrivileges: string;
-  setDocumentPrivileges: React.Dispatch<React.SetStateAction<DocumentState>>;
+  setProjectPrivileges: React.Dispatch<React.SetStateAction<ProjectState>>;
 }
 
-const ShareDocument: React.FC<ShareDocumentProps> = ({
-  docId,
+const ShareDocument: React.FC<ShareProjectProps> = ({
+  projectId,
   title,
   isShared,
   sharedPrivileges,
-  setDocumentPrivileges,
+  setProjectPrivileges,
 }) => {
   const [shareModal, setShareModal] = useState<boolean>(false);
 
   const changePrivilegesHandler = (privileges: string) => {
-    changeDocumentPrivileges(docId, privileges, isShared)
+    changeProjectPrivileges(projectId, privileges, isShared)
       .then(() => {
-        setDocumentPrivileges((currDocument) => ({
-          ...currDocument,
+        setProjectPrivileges((currProject) => ({
+          ...currProject,
           shared_role: privileges,
         }));
         toast.success(TOAST_MESSAGE.privilegesChanged, TOAST_OPTIONS);
@@ -36,11 +36,11 @@ const ShareDocument: React.FC<ShareDocumentProps> = ({
   };
 
   const shareHandler = () => {
-    shareDocument(docId, sharedPrivileges, isShared)
+    shareProject(projectId, sharedPrivileges, isShared)
       .then(() => {
-        setDocumentPrivileges((currDocument) => ({
-          ...currDocument,
-          shared_by_link: !currDocument.shared_by_link,
+        setProjectPrivileges((currProject) => ({
+          ...currProject,
+          shared_by_link: !currProject.shared_by_link,
         }));
         !isShared
           ? toast.success(TOAST_MESSAGE.documentShared, TOAST_OPTIONS)

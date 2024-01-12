@@ -2,8 +2,9 @@ import { PARSER_STYLES_URL, TOAST_OPTIONS } from "../../../consts";
 import { ClientState, OperationType, Pos } from "../../../types/ot";
 import { parse } from "latex.js";
 import { getPDF } from "../../../api";
-import { DocumentState } from "../../../Redux/documentsSlice";
+import { DocumentState } from "../../../Redux/projectsSlice";
 import toast from "react-hot-toast";
+import { DocumentType } from "../../../types/global";
 
 export const getPDFHandler = (id: string) => {
   getPDF(id).then((res) => {
@@ -33,16 +34,10 @@ export const onBeforeChangeHandler = (
   socket: React.MutableRefObject<WebSocket | null>,
   client: ClientState,
   setClient: React.Dispatch<React.SetStateAction<ClientState>>,
-  document: DocumentState
+  document: DocumentType
 ) => {
   if (!socket.current) return;
-  if (!canEdit(document)) {
-    toast.error(
-      "You don't have permission to edit this document",
-      TOAST_OPTIONS
-    );
-    return;
-  }
+
   const operation: OperationType = {
     from_pos: { line: data.from.line, ch: data.from.ch },
     to_pos: { line: data.to.line, ch: data.to.ch },
@@ -50,6 +45,7 @@ export const onBeforeChangeHandler = (
     revision: client.lastSyncedRevision,
     type: data.origin?.toUpperCase(),
   };
+
   if (data.origin) {
     if (client.sentChanges === null) {
       socket.current.send(JSON.stringify(operation));

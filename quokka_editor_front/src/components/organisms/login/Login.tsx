@@ -31,7 +31,7 @@ const Login: React.FC = () => {
           loginUser(values)
             .then((res) => {
               sessionStorage.setItem("userToken", "Bearer " + res.data.token);
-              navigate("/documents/");
+              navigate("/projects/");
             })
             .catch((err) => handleLoginError(err))
         }

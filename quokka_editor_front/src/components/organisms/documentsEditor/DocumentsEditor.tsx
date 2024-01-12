@@ -19,13 +19,14 @@ import {
 } from "./handlers";
 import { sendChanges } from "./ot";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
-import { DocumentState } from "../../../Redux/documentsSlice";
+import { DocumentState } from "../../../Redux/projectsSlice";
+import { DocumentType } from "../../../types/global";
 
 interface DocumentsEditorProps {
   client: ClientState;
   setClient: React.Dispatch<React.SetStateAction<ClientState>>;
   id: string;
-  editingDocument: DocumentState;
+  editingDocument: DocumentType;
 }
 
 const initialScroll = {
@@ -59,10 +60,13 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
   const remoteClients = useAppSelector((state) => state.clients.clients);
 
   useEffect(() => {
-    const s = createWebSocket(id, editorRef.current, setClient, dispatch);
+    const docId = "/" + editingDocument.id;
+    const s = editingDocument.id
+      ? createWebSocket(docId, editorRef.current, setClient, dispatch)
+      : null;
     socket.current = s;
-    return () => s.close();
-  }, []);
+    return () => s?.close();
+  }, [editingDocument]);
 
   useEffect(() => {
     const handler = () => {
@@ -90,8 +94,6 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
     sendChanges(socket, client, setClient);
   }, [client.sentChanges]);
 
-
-  
   return (
     <div className="grid grid-cols-2">
       <CodeMirror
@@ -132,7 +134,7 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
       {remoteClients?.map((cursor) => {
         return (
           <RemoteCursor
-            key={cursor.token}
+            key={cursor.user_token}
             cursorData={cursor}
             editor={editorRef.current}
             scrollInfo={scrollInfo}

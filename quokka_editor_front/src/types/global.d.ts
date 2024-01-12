@@ -14,3 +14,12 @@ export type RegisterType = {
   email: string;
   password: string;
 };
+
+export type DocumentType = {
+  title: string;
+  content: string;
+  id: string;
+  last_revision: number;
+  project_id: string;
+  user_id: string;
+};

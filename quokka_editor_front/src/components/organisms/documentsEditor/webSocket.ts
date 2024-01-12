@@ -1,18 +1,20 @@
 import { ThunkDispatch } from "redux-thunk";
 import {
-  RemoteClient,
   RemoteClients,
+  UpdateClientType,
   addRemoteClient,
   deleteRemoteClient,
+  getRemoteClients,
   updateRemoteClient,
 } from "../../../Redux/clientsSlice";
 import { OperationInputs, WEBSOCKET_URL } from "../../../consts";
 import logger from "../../../logger";
-import { ClientState, CursorType, OperationType } from "../../../types/ot";
+import { ClientState, OperationType } from "../../../types/ot";
 import { transform } from "./ot";
 import { AnyAction, Dispatch } from "redux";
-import { DocumentsState } from "../../../Redux/documentsSlice";
+import { ProjectsState } from "../../../Redux/projectsSlice";
 import { store } from "../../../Redux/store";
+import { UserState } from "../../../Redux/userSlice";
 
 export const createWebSocket = (
   id: string,
@@ -20,8 +22,9 @@ export const createWebSocket = (
   setClient: React.Dispatch<React.SetStateAction<ClientState>>,
   dispatchClients: ThunkDispatch<
     {
-      documents: DocumentsState;
+      projects: ProjectsState;
       clients: RemoteClients;
+      user: UserState;
     },
     undefined,
     AnyAction
@@ -32,7 +35,7 @@ export const createWebSocket = (
   const s = new WebSocket(WEBSOCKET_URL + id + userToken);
 
   s.onopen = (e) => {
-    logger.log("Connected to WebSocket");
+    logger.log("Connected to WebSocket, doc: ", id);
   };
   s.onclose = (e) => {
     logger.log("Disconnected from WebSocket");
@@ -42,7 +45,8 @@ export const createWebSocket = (
   };
   s.onmessage = (e) => {
     const eventData = JSON.parse(e.data);
-    if (eventData.message === "ACK") {
+
+    if (eventData.type === "ACKNOWLEDGE") {
       setClient((prevClient) => ({
         ...prevClient,
         lastSyncedRevision: eventData.revision_log,
@@ -50,9 +54,8 @@ export const createWebSocket = (
       }));
     } else if (eventData.message) {
       dispatchClients(deleteRemoteClient(eventData.user_token));
-    }
-    if (!eventData.data) {
-      const message: OperationType = JSON.parse(e.data);
+    } else if (eventData.type === "EXT_CHANGE") {
+      const message: OperationType = eventData.data;
       if (message.text) {
         setClient((prevClient) => ({
           ...prevClient,
@@ -73,20 +76,22 @@ export const createWebSocket = (
         }));
       }
     } else {
-      const cursorData = eventData.data;
-      const remoteCursor: CursorType = {
-        token: eventData.user_token,
-        ch: cursorData.data.ch,
-        line: cursorData.data.line,
-      };
       const remoteClients = store.getState().clients.clients;
-      if (
-        !remoteClients ||
-        !remoteClients.find((client) => client.token === remoteCursor.token)
+      if (Array.isArray(eventData) && !remoteClients) {
+        dispatchClients(getRemoteClients(eventData));
+      } else if (eventData.data) {
+        const updatedClient: UpdateClientType = {
+          user_token: eventData.user_token,
+          ch: eventData.data.data.ch,
+          line: eventData.data.data.line,
+        };
+        dispatchClients(updateRemoteClient(updatedClient));
+      } else if (
+        !remoteClients?.find(
+          (client) => client.user_token === eventData.user_token
+        )
       ) {
-        dispatchClients(addRemoteClient(remoteCursor));
-      } else {
-        dispatchClients(updateRemoteClient(remoteCursor));
+        dispatchClients(addRemoteClient(eventData));
       }
     }
   };
