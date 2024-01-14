@@ -6,7 +6,7 @@ import { store } from "./Redux/store";
 import Login from "./components/organisms/login/Login";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Register from "./components/organisms/register/Register.tsx";
-import Documents from "./components/organisms/documentsPage/Documents.tsx";
+import Projects from "./components/organisms/Projects.tsx";
 import EditorPage from "./components/organisms/documentsEditor/EditorPage.tsx";
 import AuthProvider from "./components/misc/AuthProvider.tsx";
 import { Toaster } from "react-hot-toast";
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/projects",
-    element: <Documents />,
+    element: <Projects />,
   },
   { path: "/projects/:projectId", element: <EditorPage /> },
   { path: "/404", element: <NotFoundPage /> },

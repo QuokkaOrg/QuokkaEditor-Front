@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import DocumentsEditor from "./DocumentsEditor";
 import { ClientState } from "../../../types/ot";
 import { useLocation, useNavigate } from "react-router-dom";
-import ShareDocument from "./ShareDocument";
+import ShareProject from "./ShareProject";
 import { ProjectState } from "../../../Redux/projectsSlice";
 import { getSingleProject } from "../../../api";
 import { handleEditorError } from "../../../errors";
@@ -93,7 +93,7 @@ const EditorPage = () => {
               Insert <img src="/arrow.svg" className="p-4"></img>
             </button>
           </div>
-          <ShareDocument
+          <ShareProject
             projectId={id}
             title={project.title}
             isShared={project.shared_by_link}

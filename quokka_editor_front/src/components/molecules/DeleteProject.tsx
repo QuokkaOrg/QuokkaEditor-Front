@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
-import Modal from "../../misc/Modal";
-import { deleteSelectedProject } from "../../../api";
-import logger from "../../../logger";
+import { useAppDispatch, useAppSelector } from "../../Redux/hooks";
+import Modal from "../misc/Modal";
+import { deleteSelectedProject } from "../../api";
+import logger from "../../logger";
 import toast from "react-hot-toast";
-import { TOAST_MESSAGE, TOAST_OPTIONS } from "../../../consts";
-import { ERRORS } from "../../../errors";
-import { deleteProject } from "../../../Redux/projectsSlice";
+import { TOAST_MESSAGE, TOAST_OPTIONS } from "../../consts";
+import { ERRORS } from "../../errors";
+import { deleteProject } from "../../Redux/projectsSlice";
 
 interface DeleteProjectType {
   id: string;
   title: string;
 }
 
-const DeleteDocument: React.FC = () => {
+const DeleteProject: React.FC = () => {
   const projectsState = useAppSelector((state) => state.projects.items);
   const dispatch = useAppDispatch();
   const [deleteModal, setDeleteModal] = useState(false);
@@ -84,4 +84,4 @@ const DeleteDocument: React.FC = () => {
   );
 };
 
-export default DeleteDocument;
+export default DeleteProject;

@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import { useAppDispatch } from "../../../Redux/hooks";
-import Modal from "../../misc/Modal";
-import { TemplateType } from "../../../types/global";
+import { useAppDispatch } from "../../Redux/hooks";
+import Modal from "../misc/Modal";
+import { TemplateType } from "../../types/global";
 import { useNavigate } from "react-router-dom";
-import logger from "../../../logger";
-import { addNewDocument, addNewProject, getTemplates } from "../../../api";
-import { addProject } from "../../../Redux/projectsSlice";
+import logger from "../../logger";
+import { addNewDocument, addNewProject, getTemplates } from "../../api";
+import { addProject } from "../../Redux/projectsSlice";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
-import { TOAST_OPTIONS } from "../../../consts";
-import { ERRORS } from "../../../errors";
+import { TOAST_OPTIONS } from "../../consts";
+import { ERRORS } from "../../errors";
 
-const AddDocument: React.FC = () => {
+const AddProject: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [addModal, setAddModal] = useState(false);
@@ -75,4 +75,4 @@ const AddDocument: React.FC = () => {
   );
 };
 
-export default AddDocument;
+export default AddProject;

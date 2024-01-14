@@ -1,6 +1,6 @@
 import ReactPaginate from "react-paginate";
 import { useAppSelector, useAppDispatch } from "../../../Redux/hooks";
-import DocumentBox from "../../atoms/documentBox/DocumentBox";
+import ProjectBox from "../../atoms/ProjectBox";
 import { getProjects } from "../../../Redux/projectsSlice";
 import { getPageOfProjects } from "../../../api";
 import logger from "../../../logger";
@@ -11,7 +11,7 @@ type PageChange = {
   selected: number;
 };
 
-const PaginatedDocuments: React.FC = () => {
+const PaginatedProjects: React.FC = () => {
   const dispatch = useAppDispatch();
   const projects = useAppSelector((state) => state.projects.items);
   const pageCount = useAppSelector((state) => state.projects.pages);
@@ -37,7 +37,7 @@ const PaginatedDocuments: React.FC = () => {
     <>
       <div className="flex flex-col items-start w-full">
         {projects.map(({ title, id, selected }, idx) => (
-          <DocumentBox
+          <ProjectBox
             key={id}
             {...{ title, id, selected }}
             even={!!(idx % 2)}
@@ -67,4 +67,4 @@ const PaginatedDocuments: React.FC = () => {
   );
 };
 
-export default PaginatedDocuments;
+export default PaginatedProjects;
