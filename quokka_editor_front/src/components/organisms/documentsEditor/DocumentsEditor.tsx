@@ -9,7 +9,7 @@ import { ClientState, CursorType, OperationType, Pos } from "../../../types/ot";
 import { createWebSocket } from "./webSocket";
 
 import { HtmlGenerator } from "latex.js";
-import RemoteCursor from "../../atoms/remoteCursor/RemoteCursor";
+import RemoteCursor from "../../atoms/RemoteCursor";
 import { ScrollInfo } from "codemirror";
 import {
   getPDFHandler,

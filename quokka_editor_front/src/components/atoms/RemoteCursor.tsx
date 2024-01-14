@@ -1,6 +1,6 @@
 import { ScrollInfo } from "codemirror";
-import { CursorType } from "../../../types/ot";
-import { RemoteClient } from "../../../Redux/clientsSlice";
+import { CursorType } from "../../types/ot";
+import { RemoteClient } from "../../Redux/clientsSlice";
 
 interface RemoteCursorProps {
   cursorData: RemoteClient;

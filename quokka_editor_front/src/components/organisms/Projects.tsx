@@ -3,7 +3,7 @@ import { useAppDispatch } from "../../Redux/hooks";
 import { useEffect } from "react";
 import { getProjects } from "../../Redux/projectsSlice";
 import AddProject from "../molecules/AddProject";
-import SearchBar from "../atoms/searchBar/SearchBar";
+import SearchBar from "../atoms/SearchBar";
 import ProjectOptions from "../molecules/ProjectOptions";
 import ProjectsGrid from "../molecules/projectsGrid/ProjectsGrid";
 import { getPageOfProjects, getUser } from "../../api";
