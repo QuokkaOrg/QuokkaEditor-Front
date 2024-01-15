@@ -27,6 +27,7 @@ interface DocumentsEditorProps {
   setClient: React.Dispatch<React.SetStateAction<ClientState>>;
   id: string;
   editingDocument: DocumentType;
+  setDocuments: React.Dispatch<React.SetStateAction<DocumentType[]>>;
 }
 
 const initialScroll = {
@@ -43,6 +44,7 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
   setClient,
   id,
   editingDocument,
+  setDocuments,
 }) => {
   const [{ data, error }, setState] = useState<{
     data: string;
@@ -77,7 +79,7 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
         document.getElementById("FilesBar")?.clientHeight || 0;
       editorRef.current?.setSize(
         "100%",
-        height - (navbarHeight + fileBarHeight)
+        height - (navbarHeight + fileBarHeight + 10)
       );
       if (!iframeRef.current) return;
       const width = iframeRef.current.getBoundingClientRect().width;
@@ -93,6 +95,16 @@ const DocumentsEditor: React.FC<DocumentsEditorProps> = ({
   useEffect(() => {
     sendChanges(socket, client, setClient);
   }, [client.sentChanges]);
+
+  useEffect(() => {
+    setDocuments((currDocuments) =>
+      currDocuments.map((document) => {
+        if (document.id === editingDocument.id)
+          return { ...document, content: client.documentState };
+        else return document;
+      })
+    );
+  }, [client.documentState]);
 
   return (
     <div className="grid grid-cols-2">

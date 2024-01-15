@@ -16,6 +16,8 @@ export const TOAST_MESSAGE = {
   documentNotShared: "Your document is no longer shared",
   logOut: "Succesfully logged out!",
   userUpdated: "User informations succesfully updated!",
+  documentAdded: "Succesfully added new document!",
+  documentDeleted: "Succesfully deleted current document!",
 };
 
 export const OperationInputs = {

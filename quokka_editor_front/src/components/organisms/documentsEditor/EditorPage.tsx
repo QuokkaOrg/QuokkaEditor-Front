@@ -10,6 +10,8 @@ import ProjectTitleUpdate from "./ProjectTitleUpdate";
 import { DocumentType } from "../../../types/global";
 import DocumentsList from "./DocumentsList";
 import { useAppSelector } from "../../../Redux/hooks";
+import AddDocument from "../../molecules/AddDocument";
+import DeleteDocument from "../../molecules/DeleteDocument";
 
 const initialClient = {
   lastSyncedRevision: 0,
@@ -55,8 +57,20 @@ const EditorPage = () => {
   useEffect(() => {
     getSingleProject(id)
       .then((res) => {
-        setDocuments(res.data.documents);
-        setActiveDocument(res.data.documents[0]);
+        setDocuments(
+          res.data.documents.map((document: DocumentType) => ({
+            ...document,
+            content: document.content
+              ? JSON.parse(document.content).join("\n")
+              : document.content,
+          }))
+        );
+        setActiveDocument({
+          ...res.data.documents[0],
+          content: res.data.documents[0].content
+            ? JSON.parse(res.data.documents[0].content).join("\n")
+            : res.data.documents[0].content,
+        });
         setProject(res.data.project);
       })
       .catch((err) => handleEditorError(err, navigate));
@@ -65,9 +79,7 @@ const EditorPage = () => {
   useEffect(() => {
     setClient({
       ...client,
-      documentState: activeDocument.content
-        ? JSON.parse(activeDocument.content).join("\n")
-        : activeDocument.content,
+      documentState: activeDocument.content,
       lastSyncedRevision: activeDocument.last_revision,
     });
   }, [activeDocument]);
@@ -104,19 +116,32 @@ const EditorPage = () => {
       </div>
       <div
         id="FilesBar"
-        className="flex bg-project-there-dark-400 bg-[#3A3C4E] p-1"
+        className="flex justify-between bg-project-there-dark-400 bg-[#3A3C4E] p-1"
       >
-        <img src="/typesrc.svg" className="mx-1" title="Documents List"></img>
-        <DocumentsList
-          documents={documents}
-          setActiveDocument={setActiveDocument}
-        />
+        <div className="flex">
+          <img src="/typesrc.svg" className="mx-1" title="Documents List"></img>
+          <DocumentsList
+            documents={documents}
+            setActiveDocument={setActiveDocument}
+          />
+        </div>
+        <div className="flex mr-5">
+          <DeleteDocument
+            activeDocId={activeDocument.id}
+            activeDocTitle={activeDocument.title}
+            documents={documents}
+            setDocuments={setDocuments}
+            setActiveDocument={setActiveDocument}
+          />
+          <AddDocument project_id={project.id} setDocuments={setDocuments} />
+        </div>
       </div>
       <DocumentsEditor
         client={client}
         setClient={setClient}
         id={id}
         editingDocument={activeDocument}
+        setDocuments={setDocuments}
       />
     </div>
   );
