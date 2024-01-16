@@ -122,6 +122,7 @@ const EditorPage = () => {
           <img src="/typesrc.svg" className="mx-1" title="Documents List"></img>
           <DocumentsList
             documents={documents}
+            activeDocumentId={activeDocument.id}
             setActiveDocument={setActiveDocument}
           />
         </div>
