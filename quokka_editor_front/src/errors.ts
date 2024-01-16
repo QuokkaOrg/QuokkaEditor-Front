@@ -11,7 +11,8 @@ export const ERRORS = {
   sessionExpired: "Your session expired. Please login again.",
   somethingWrong: "Something went wrong. Please try again.",
   noTemplates: "Couldn't load templates. Please try again later.",
-  lastDocument: "Last document in a project can not be deleted."
+  lastDocument: "Last document in a project can not be deleted.",
+  notAnAuthor: "Only project author can add or delete documents.",
 };
 
 type ApiErrorType = {

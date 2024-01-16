@@ -39,7 +39,9 @@ const DeleteDocument: React.FC<DeleteDocumentProps> = ({
       .catch((err: AxiosError) => {
         logger.error(err);
         setShowModal(!showModal);
-        toast.error(ERRORS.lastDocument, TOAST_OPTIONS);
+        if (err.response?.status === 403)
+          toast.error(ERRORS.notAnAuthor, TOAST_OPTIONS);
+        else toast.error(ERRORS.lastDocument, TOAST_OPTIONS);
       });
   };
 

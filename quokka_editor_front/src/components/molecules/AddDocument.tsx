@@ -37,7 +37,9 @@ const AddDocument: React.FC<AddDocumentProps> = ({
       })
       .catch((err) => {
         logger.error(err);
-        toast.error(ERRORS.somethingWrong, TOAST_OPTIONS);
+        if (err.response.status === 403)
+          toast.error(ERRORS.notAnAuthor, TOAST_OPTIONS);
+        else toast.error(ERRORS.somethingWrong, TOAST_OPTIONS);
       });
   };
 
