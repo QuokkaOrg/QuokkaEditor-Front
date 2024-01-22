@@ -60,16 +60,12 @@ const EditorPage = () => {
         setDocuments(
           res.data.documents.map((document: DocumentType) => ({
             ...document,
-            content: document.content
-              ? JSON.parse(document.content).join("\n")
-              : document.content,
+            content: JSON.parse(document.content).join("\n"),
           }))
         );
         setActiveDocument({
           ...res.data.documents[0],
-          content: res.data.documents[0].content
-            ? JSON.parse(res.data.documents[0].content).join("\n")
-            : res.data.documents[0].content,
+          content: JSON.parse(res.data.documents[0].content).join("\n"),
         });
         setProject(res.data.project);
       })

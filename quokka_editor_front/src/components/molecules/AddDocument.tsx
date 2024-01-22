@@ -31,7 +31,10 @@ const AddDocument: React.FC<AddDocumentProps> = ({
   const addDoc = (pickedTemplate: string) => {
     addNewDocument(project_id, pickedTemplate ? pickedTemplate : null)
       .then((res) => {
-        setDocuments((currDocuments) => [...currDocuments, res.data]);
+        setDocuments((currDocuments) => [
+          ...currDocuments,
+          { ...res.data, content: JSON.parse(res.data.content).join("\n") },
+        ]);
         setShowModal(!showModal);
         toast.success(TOAST_MESSAGE.documentAdded, TOAST_OPTIONS);
       })
