@@ -14,7 +14,7 @@ interface ShareProjectProps {
   setProjectPrivileges: React.Dispatch<React.SetStateAction<ProjectState>>;
 }
 
-const ShareDocument: React.FC<ShareProjectProps> = ({
+const ShareProject: React.FC<ShareProjectProps> = ({
   projectId,
   title,
   isShared,
@@ -118,4 +118,4 @@ const ShareDocument: React.FC<ShareProjectProps> = ({
   );
 };
 
-export default ShareDocument;
+export default ShareProject;

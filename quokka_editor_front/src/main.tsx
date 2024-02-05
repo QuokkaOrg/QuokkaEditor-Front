@@ -3,14 +3,14 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { Provider } from "react-redux/es/exports";
 import { store } from "./Redux/store";
-import Login from "./components/organisms/login/Login";
+import Login from "./components/organisms/Login.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Register from "./components/organisms/register/Register.tsx";
-import Documents from "./components/organisms/documentsPage/Documents.tsx";
+import Register from "./components/organisms/Register.tsx";
+import Projects from "./components/organisms/Projects.tsx";
 import EditorPage from "./components/organisms/documentsEditor/EditorPage.tsx";
 import AuthProvider from "./components/misc/AuthProvider.tsx";
 import { Toaster } from "react-hot-toast";
-import NotFoundPage from "./components/organisms/NotFoundPage/NotFoundPage.tsx";
+import NotFoundPage from "./components/organisms/NotFoundPage.tsx";
 import ProfilePage from "./components/organisms/Profile/ProfilePage.tsx";
 
 const router = createBrowserRouter([
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/projects",
-    element: <Documents />,
+    element: <Projects />,
   },
   { path: "/projects/:projectId", element: <EditorPage /> },
   { path: "/404", element: <NotFoundPage /> },

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import DocumentsEditor from "./DocumentsEditor";
 import { ClientState } from "../../../types/ot";
 import { useLocation, useNavigate } from "react-router-dom";
-import ShareDocument from "./ShareDocument";
+import ShareProject from "./ShareProject";
 import { ProjectState } from "../../../Redux/projectsSlice";
 import { getSingleProject } from "../../../api";
 import { handleEditorError } from "../../../errors";
@@ -10,6 +10,8 @@ import ProjectTitleUpdate from "./ProjectTitleUpdate";
 import { DocumentType } from "../../../types/global";
 import DocumentsList from "./DocumentsList";
 import { useAppSelector } from "../../../Redux/hooks";
+import AddDocument from "../../molecules/AddDocument";
+import DeleteDocument from "../../molecules/DeleteDocument";
 
 const initialClient = {
   lastSyncedRevision: 0,
@@ -55,8 +57,16 @@ const EditorPage = () => {
   useEffect(() => {
     getSingleProject(id)
       .then((res) => {
-        setDocuments(res.data.documents);
-        setActiveDocument(res.data.documents[0]);
+        setDocuments(
+          res.data.documents.map((document: DocumentType) => ({
+            ...document,
+            content: JSON.parse(document.content).join("\n"),
+          }))
+        );
+        setActiveDocument({
+          ...res.data.documents[0],
+          content: JSON.parse(res.data.documents[0].content).join("\n"),
+        });
         setProject(res.data.project);
       })
       .catch((err) => handleEditorError(err, navigate));
@@ -65,9 +75,7 @@ const EditorPage = () => {
   useEffect(() => {
     setClient({
       ...client,
-      documentState: activeDocument.content
-        ? JSON.parse(activeDocument.content).join("\n")
-        : activeDocument.content,
+      documentState: activeDocument.content,
       lastSyncedRevision: activeDocument.last_revision,
     });
   }, [activeDocument]);
@@ -93,7 +101,7 @@ const EditorPage = () => {
               Insert <img src="/arrow.svg" className="p-4"></img>
             </button>
           </div>
-          <ShareDocument
+          <ShareProject
             projectId={id}
             title={project.title}
             isShared={project.shared_by_link}
@@ -104,19 +112,33 @@ const EditorPage = () => {
       </div>
       <div
         id="FilesBar"
-        className="flex bg-project-there-dark-400 bg-[#3A3C4E] p-1"
+        className="flex justify-between bg-project-there-dark-400 bg-[#3A3C4E] p-1"
       >
-        <img src="/typesrc.svg" className="mx-1" title="Documents List"></img>
-        <DocumentsList
-          documents={documents}
-          setActiveDocument={setActiveDocument}
-        />
+        <div className="flex">
+          <img src="/typesrc.svg" className="mx-1" title="Documents List"></img>
+          <DocumentsList
+            documents={documents}
+            activeDocumentId={activeDocument.id}
+            setActiveDocument={setActiveDocument}
+          />
+        </div>
+        <div className="flex mr-5">
+          <DeleteDocument
+            activeDocId={activeDocument.id}
+            activeDocTitle={activeDocument.title}
+            documents={documents}
+            setDocuments={setDocuments}
+            setActiveDocument={setActiveDocument}
+          />
+          <AddDocument project_id={project.id} setDocuments={setDocuments} />
+        </div>
       </div>
       <DocumentsEditor
         client={client}
         setClient={setClient}
         id={id}
         editingDocument={activeDocument}
+        setDocuments={setDocuments}
       />
     </div>
   );

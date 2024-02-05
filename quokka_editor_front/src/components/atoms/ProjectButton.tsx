@@ -1,8 +1,8 @@
-interface DocumentButtonProps {
+interface ProjectButtonProps {
   children?: React.ReactNode;
 }
 
-const DocumentButton: React.FC<DocumentButtonProps> = ({ children }) => {
+const ProjectButton: React.FC<ProjectButtonProps> = ({ children }) => {
   return (
     <button
       type="button"
@@ -13,4 +13,4 @@ const DocumentButton: React.FC<DocumentButtonProps> = ({ children }) => {
   );
 };
 
-export default DocumentButton;
+export default ProjectButton;

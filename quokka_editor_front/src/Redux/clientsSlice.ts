@@ -64,6 +64,9 @@ export const clientsSlice = createSlice({
         else return client;
       });
     },
+    clearRemoteClients: (state) => {
+      state.clients = initialState.clients;
+    },
   },
 });
 
@@ -72,5 +75,6 @@ export const {
   deleteRemoteClient,
   updateRemoteClient,
   getRemoteClients,
+  clearRemoteClients,
 } = clientsSlice.actions;
 export default clientsSlice.reducer;

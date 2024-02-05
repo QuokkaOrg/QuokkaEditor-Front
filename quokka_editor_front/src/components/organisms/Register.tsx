@@ -1,11 +1,11 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
-import { ERRORS } from "../../../errors";
-import { RegisterType } from "../../../types/global";
-import { registerUser } from "../../../api";
+import { ERRORS } from "../../errors";
+import { RegisterType } from "../../types/global";
+import { registerUser } from "../../api";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { TOAST_OPTIONS } from "../../../consts";
+import { TOAST_OPTIONS } from "../../consts";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().required(ERRORS.required),
@@ -20,11 +20,21 @@ const Register: React.FC = () => {
 
   return (
     <div className="flex flex-col justify-center items-center p-12">
-      <div className ="w-56 m-9 shadow rounded-[30px]">
-          <Link to={"/"}>
-            <button type="button" className="px-7 py-2 cursor-pointer bg-transparent border-none outline-none text-project-theme-dark-115">Log in</button>
-          </Link>
-            <button type="button" className="px-8 py-2 cursor-pointer bg-gradient-to-r from-project-theme-dark-110 to-project-theme-dark-105 rounded-[30px] border-none outline-none text-white">Register</button>
+      <div className="w-56 m-9 shadow rounded-[30px]">
+        <Link to={"/"}>
+          <button
+            type="button"
+            className="px-7 py-2 cursor-pointer bg-transparent border-none outline-none text-project-theme-dark-115"
+          >
+            Log in
+          </button>
+        </Link>
+        <button
+          type="button"
+          className="px-8 py-2 cursor-pointer bg-gradient-to-r from-project-theme-dark-110 to-project-theme-dark-105 rounded-[30px] border-none outline-none text-white"
+        >
+          Register
+        </button>
       </div>
       <Formik
         initialValues={{ username: "", email: "", password: "" }}

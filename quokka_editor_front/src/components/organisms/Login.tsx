@@ -1,8 +1,8 @@
 import { Field, Form, Formik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
-import { LoginType } from "../../../types/global";
-import { loginUser } from "../../../api";
-import { handleLoginError } from "../../../errors";
+import { LoginType } from "../../types/global";
+import { loginUser } from "../../api";
+import { handleLoginError } from "../../errors";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();

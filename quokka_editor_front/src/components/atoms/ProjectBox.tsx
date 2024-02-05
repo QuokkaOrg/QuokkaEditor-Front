@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../../Redux/hooks";
-import { setSelectedProject } from "../../../Redux/projectsSlice";
+import { useAppDispatch } from "../../Redux/hooks";
+import { setSelectedProject } from "../../Redux/projectsSlice";
 
-interface DocumentBoxProps {
+interface ProjectBoxProps {
   title: string;
   id: string;
   selected: boolean;
@@ -10,7 +10,7 @@ interface DocumentBoxProps {
   content?: string;
 }
 
-const DocumentBox: React.FC<DocumentBoxProps> = ({
+const ProjectBox: React.FC<ProjectBoxProps> = ({
   title,
   id,
   selected,
@@ -44,4 +44,4 @@ const DocumentBox: React.FC<DocumentBoxProps> = ({
   );
 };
 
-export default DocumentBox;
+export default ProjectBox;
